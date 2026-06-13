@@ -4,6 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>BREAKOUTCHARTS — NSE Stock Screener</title>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <style>
 :root{--bg:#0d0f14;--surface:#13161e;--border:#1e2330;--border2:#252b3b;--text:#c8d0e0;--muted:#5a6480;--accent:#3b82f6;--green:#22c55e;--red:#ef4444;--amber:#f59e0b;--cyan:#06b6d4;--purple:#a855f7;--font:'Inter','Segoe UI',system-ui,sans-serif;--mono:'JetBrains Mono','Fira Code',monospace;}
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -62,16 +63,28 @@ select option{background:var(--surface);}
 .stat-card .val{font-size:20px;font-weight:700;font-family:var(--mono);color:#fff;line-height:1;}
 .stat-card .lbl{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:4px;}
 
-/* LAYOUT UPDATED TO HIDE PARAMETERS FROM PUBLIC UI */
+/* HIDING PARAMETERS FROM PUBLIC UI */
 .layout{display:block;}
 .cond-panel{display:none;}
+
+/* TABS */
+.tabs-container { display: flex; gap: 10px; margin-bottom: 14px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+.tab-btn { background: transparent; border: none; color: var(--muted); font-size: 13px; font-weight: 700; cursor: pointer; padding: 10px 20px; border-radius: 8px; font-family: var(--font); transition: all 0.2s; display: flex; align-items: center; gap: 6px;}
+.tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+.tab-btn.active { color: var(--accent); background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2); }
+
+/* CHARTS GRID */
+.charts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); gap: 16px; }
+.chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+.chart-header { display: flex; align-items: center; gap: 8px; padding: 14px 16px; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.015); font-family: var(--font); color: #fff; }
+.chart-render-area { padding: 10px; height: 340px; }
 
 /* TABLE */
 .table-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
 .table-head{display:flex;align-items:center;gap:8px;padding:11px 14px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.015);}
 .table-head h2{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text);}
 .table-actions{margin-left:auto;display:flex;gap:6px;align-items:center;}
-.btn-sm{padding:5px 11px;font-size:10px;background:var(--border2);color:var(--muted);border:1px solid var(--border);border-radius:5px;cursor:pointer;font-family:var(--font);}
+.btn-sm{padding:5px 11px;font-size:10px;background:var(--border2);color:var(--muted);border:1px solid var(--border);border-radius:5px;cursor:pointer;font-family:var(--font); transition:all 0.15s;}
 .btn-sm:hover{color:var(--text);border-color:var(--accent);}
 .results-wrap{overflow-x:auto;max-height:65vh;overflow-y:auto;}
 table{width:100%;border-collapse:collapse;}
@@ -82,12 +95,12 @@ thead th.asc::after{content:' ↑';color:var(--accent);}
 thead th.desc::after{content:' ↓';color:var(--accent);}
 tbody tr{border-bottom:1px solid rgba(255,255,255,.04);transition:background .1s;}
 tbody tr:hover{background:rgba(255,255,255,.025);}
-td{padding:8px 10px;font-family:var(--mono);font-size:11px;white-space:nowrap;}
+td{padding:8px 10px;font-family:var(--mono);font-size:11px;white-space:nowrap; vertical-align:middle;}
 .sym-cell{font-weight:700;font-size:12px;color:#fff;}
 .pos{color:var(--green);}
 .neg{color:var(--red);}
 .neu{color:var(--muted);}
-.pill{display:inline-block;padding:2px 8px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.08em;}
+.pill{display:inline-flex;align-items:center;padding:2px 8px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.08em;}
 .pill-buy{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.25);}
 .pill-watch{background:rgba(245,158,11,.12);color:var(--amber);border:1px solid rgba(245,158,11,.25);}
 .pill-fail{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.25);}
@@ -137,7 +150,7 @@ td{padding:8px 10px;font-family:var(--mono);font-size:11px;white-space:nowrap;}
         <label>Sector Filter</label>
         <select id="sectorFilter" onchange="updateCount()" style="width:160px;">
           <option value="all">All Sectors</option>
-          </select>
+        </select>
       </div>
       <div class="ctrl-group">
         <label>Data Period</label>
@@ -207,51 +220,66 @@ td{padding:8px 10px;font-family:var(--mono);font-size:11px;white-space:nowrap;}
       <input type="number" id="rsiMax" value="75">
     </div>
 
-    <div class="table-card">
-      <div class="table-head">
-        <h2>📋 Screener Results</h2>
-        <div class="table-actions">
-          <select id="sigFilter" onchange="applyFilter()" style="width:auto;padding:4px 8px;font-size:10px;">
-            <option value="all">All Signals</option>
-            <option value="BUY">BUY only</option>
-            <option value="WATCH">WATCH only</option>
-            <option value="FAIL">FAIL only</option>
-          </select>
-          <select id="sectorResultFilter" onchange="applyFilter()" style="width:auto;padding:4px 8px;font-size:10px;">
-            <option value="all">All Sectors</option>
+    <div class="tabs-container">
+      <button class="tab-btn active" onclick="switchTab('table')">📋 Screener Results</button>
+      <button class="tab-btn" onclick="switchTab('charts')">📈 View BUY Charts</button>
+    </div>
+
+    <div id="view-table" class="view-panel">
+      <div class="table-card">
+        <div class="table-head">
+          <h2>📋 Screener Results</h2>
+          <div class="table-actions">
+            <select id="sigFilter" onchange="applyFilter()" style="width:auto;padding:4px 8px;font-size:10px;">
+              <option value="all">All Signals</option>
+              <option value="BUY">BUY only</option>
+              <option value="WATCH">WATCH only</option>
+              <option value="FAIL">FAIL only</option>
             </select>
-          <button class="btn-sm" onclick="exportCSV()">↓ Export</button>
-          <button class="btn-sm" onclick="clearAll()">✕ Clear</button>
+            <select id="sectorResultFilter" onchange="applyFilter()" style="width:auto;padding:4px 8px;font-size:10px;">
+              <option value="all">All Sectors</option>
+            </select>
+            <button class="btn-sm" onclick="exportCSV()">↓ Export</button>
+            <button class="btn-sm" onclick="clearAll()">✕ Clear</button>
+          </div>
+        </div>
+        <div class="results-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th onclick="sortBy('sym')">#&nbsp;Symbol</th>
+                <th onclick="sortBy('sector')">Sector</th>
+                <th onclick="sortBy('close')">Close ₹</th>
+                <th onclick="sortBy('chg')">Chg %</th>
+                <th>Signal</th>
+                <th onclick="sortBy('ema20dist')">EMA20 Dist</th>
+                <th onclick="sortBy('ema20')">EMA20</th>
+                <th onclick="sortBy('wma42')">WMA42</th>
+                <th onclick="sortBy('wma84')">WMA84</th>
+                <th onclick="sortBy('volRat')">Vol Ratio</th>
+                <th onclick="sortBy('rsi')">RSI14</th>
+                <th onclick="sortBy('passCount')">Score</th>
+                <th>Src</th>
+              </tr>
+            </thead>
+            <tbody id="resultBody">
+              <tr><td colspan="13">
+                <div class="empty">
+                  <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                  <p>Select your universe and sector, then click <strong>Screen Universe</strong>.<br><br>The screener will auto-fetch EOD data and run your strategy.</p>
+                </div>
+              </td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
-      <div class="results-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th onclick="sortBy('sym')">#&nbsp;Symbol</th>
-              <th onclick="sortBy('sector')">Sector</th>
-              <th onclick="sortBy('close')">Close ₹</th>
-              <th onclick="sortBy('chg')">Chg %</th>
-              <th>Signal</th>
-              <th onclick="sortBy('ema20dist')">EMA20 Dist</th>
-              <th onclick="sortBy('ema20')">EMA20</th>
-              <th onclick="sortBy('wma42')">WMA42</th>
-              <th onclick="sortBy('wma84')">WMA84</th>
-              <th onclick="sortBy('volRat')">Vol Ratio</th>
-              <th onclick="sortBy('rsi')">RSI14</th>
-              <th onclick="sortBy('passCount')">Score</th>
-              <th>Src</th>
-            </tr>
-          </thead>
-          <tbody id="resultBody">
-            <tr><td colspan="13">
-              <div class="empty">
-                <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                <p>Select your universe and sector, then click <strong>Screen Universe</strong>.<br><br>The screener will auto-fetch EOD data and run your strategy.</p>
-              </div>
-            </td></tr>
-          </tbody>
-        </table>
+    </div>
+
+    <div id="view-charts" class="view-panel" style="display:none;">
+      <div class="charts-grid" id="chartsGrid">
+        <div class="empty" style="grid-column: 1/-1;">
+          <p>Run the screener first to see your BUY charts generated here instantly.</p>
+        </div>
       </div>
     </div>
 
@@ -462,15 +490,18 @@ function screenStock(sym,rows,source){
   let signal='FAIL';
   if(allPassed)signal='BUY';
   else if(wmaAligned&&passed>=required-2)signal='WATCH';
+  
+  // Return the history (rows) so we can instantly render charts later without refetching
   return{sym,sector:SECTOR_MAP[sym]||'—',close,chg,signal,source,
     ema20:e20,ema20dist,aboveEma20,wma42:v42,wma84:v84,wma30:v30,wma60:v60,
-    volRat,weeklyVol,rsi,conds,results,passed,required,allPassed,wmaAligned,passCount:passed};
+    volRat,weeklyVol,rsi,conds,results,passed,required,allPassed,wmaAligned,passCount:passed, history:rows};
 }
 
 // ═══════════════════════════════════════════
 // RUN ALL
 // ═══════════════════════════════════════════
 let screenResults=[], sortCol=null, sortDir=1, scanning=false;
+let activeChartInstances = []; // To prevent memory leaks when redrawing tabs
 
 async function runAll(){
   const syms=getFilteredSyms();
@@ -517,7 +548,7 @@ async function runAll(){
         screenResults.push({sym,sector:SECTOR_MAP[sym]||'—',close:0,chg:0,signal:'ERR',source:'error',
           ema20:0,ema20dist:0,aboveEma20:false,wma42:0,wma84:0,wma30:0,wma60:0,
           volRat:0,weeklyVol:0,rsi:null,conds:{},results:{},passed:0,required:0,
-          allPassed:false,wmaAligned:false,passCount:0});
+          allPassed:false,wmaAligned:false,passCount:0, history:[]});
         addLog(sym,false,'');
       }
     }));
@@ -542,43 +573,68 @@ function stopScan(){
 function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
 
 // ═══════════════════════════════════════════
-// RENDER
+// TABS & RENDERING
 // ═══════════════════════════════════════════
-function renderResults(){applyFilter();updateStats();}
-
-function applyFilter(){
-  const sf=document.getElementById('sigFilter').value;
-  const sec=document.getElementById('sectorResultFilter').value;
-  let data=screenResults.filter(r=>r.signal!=='ERR');
-  if(sf!=='all') data=data.filter(r=>r.signal===sf);
-  if(sec!=='all') data=data.filter(r=>r.sector===sec);
-  data.sort((a,b)=>{
-    const order={BUY:0,WATCH:1,FAIL:2};
-    if(sortCol) return 0;
-    return (order[a.signal]||2)-(order[b.signal]||2);
-  });
-  renderTable(data);
+function switchTab(viewId) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.view-panel').forEach(p => p.style.display = 'none');
+  
+  if (viewId === 'table') {
+    document.querySelectorAll('.tab-btn')[0].classList.add('active');
+    document.getElementById('view-table').style.display = 'block';
+  } else {
+    document.querySelectorAll('.tab-btn')[1].classList.add('active');
+    document.getElementById('view-charts').style.display = 'block';
+    renderChartsView(); // Render instantly based on memory
+  }
 }
 
-function renderTable(data){
-  const body=document.getElementById('resultBody');
+function renderResults() {
+  applyFilter();
+  updateStats();
+}
+
+function applyFilter() {
+  const sf = document.getElementById('sigFilter').value;
+  const sec = document.getElementById('sectorResultFilter').value;
+  let data = screenResults.filter(r => r.signal !== 'ERR');
+  if(sf !== 'all') data = data.filter(r => r.signal === sf);
+  if(sec !== 'all') data = data.filter(r => r.sector === sec);
+  
+  data.sort((a,b) => {
+    const order = {BUY:0, WATCH:1, FAIL:2};
+    if(sortCol) return 0;
+    return (order[a.signal]||2) - (order[b.signal]||2);
+  });
+  
+  renderTable(data);
+  
+  // If the charts tab is currently open, dynamically update the charts as well
+  if (document.getElementById('view-charts').style.display === 'block') {
+    renderChartsView();
+  }
+}
+
+function renderTable(data) {
+  const body = document.getElementById('resultBody');
   if(!data.length){
-    body.innerHTML=`<tr><td colspan="13"><div class="empty"><p>No results yet or no matches for current filter.</p></div></td></tr>`;
+    body.innerHTML = `<tr><td colspan="13"><div class="empty"><p>No results yet or no matches for current filter.</p></div></td></tr>`;
     return;
   }
-  const maxEd=+document.getElementById('ema20dist').value;
-  let rowNum=0;
-  body.innerHTML=data.map(r=>{
+  const maxEd = +document.getElementById('ema20dist').value;
+  let rowNum = 0;
+  body.innerHTML = data.map(r => {
     rowNum++;
-    const sigClass={BUY:'pill-buy',WATCH:'pill-watch',FAIL:'pill-fail'}[r.signal]||'pill-fail';
-    const p=Math.min(100,(r.ema20dist/maxEd)*100);
-    const bc=r.ema20dist<=maxEd?(r.aboveEma20?'var(--green)':'var(--amber)'):'var(--red)';
-    const proxBar=`<div style="display:flex;align-items:center;gap:4px;"><div class="prox-bar"><div class="prox-fill" style="width:${p}%;background:${bc};"></div></div><span style="color:${bc};font-size:9px;">${r.ema20dist.toFixed(1)}%${r.aboveEma20?'↑':'↓'}</span></div>`;
-    const rsiCol=r.rsi===null?'var(--muted)':r.rsi>70?'var(--red)':r.rsi<30?'var(--amber)':'var(--green)';
-    const scoreCol=r.passed>=r.required?'var(--green)':r.passed>=r.required*.7?'var(--amber)':'var(--red)';
-    const scol=SECTOR_COLORS[r.sector]||'#5a6480';
-    const srcTag=r.source==='stooq'?'src-stooq':r.source==='yahoo'?'src-yahoo':'src-err';
-    return`<tr>
+    const sigClass = {BUY:'pill-buy', WATCH:'pill-watch', FAIL:'pill-fail'}[r.signal] || 'pill-fail';
+    const p = Math.min(100, (r.ema20dist/maxEd)*100);
+    const bc = r.ema20dist <= maxEd ? (r.aboveEma20 ? 'var(--green)' : 'var(--amber)') : 'var(--red)';
+    const proxBar = `<div style="display:flex;align-items:center;gap:4px;"><div class="prox-bar"><div class="prox-fill" style="width:${p}%;background:${bc};"></div></div><span style="color:${bc};font-size:9px;">${r.ema20dist.toFixed(1)}%${r.aboveEma20?'↑':'↓'}</span></div>`;
+    const rsiCol = r.rsi === null ? 'var(--muted)' : r.rsi > 70 ? 'var(--red)' : r.rsi < 30 ? 'var(--amber)' : 'var(--green)';
+    const scoreCol = r.passed >= r.required ? 'var(--green)' : r.passed >= r.required*.7 ? 'var(--amber)' : 'var(--red)';
+    const scol = SECTOR_COLORS[r.sector] || '#5a6480';
+    const srcTag = r.source === 'stooq' ? 'src-stooq' : r.source === 'yahoo' ? 'src-yahoo' : 'src-err';
+    
+    return `<tr>
       <td class="sym-cell">${rowNum}&nbsp;${r.sym}</td>
       <td><span class="sector-tag" style="color:${scol};border-color:${scol}30;background:${scol}12;">${r.sector}</span></td>
       <td style="color:#fff;">${r.close.toFixed(2)}</td>
@@ -594,6 +650,75 @@ function renderTable(data){
       <td><span class="src-tag ${srcTag}">${r.source.toUpperCase()}</span></td>
     </tr>`;
   }).join('');
+}
+
+// ═══════════════════════════════════════════
+// INSTANT CHARTS VIEW LOGIC
+// ═══════════════════════════════════════════
+function renderChartsView() {
+  const container = document.getElementById('chartsGrid');
+  container.innerHTML = '';
+  
+  // Destroy old charts to free memory
+  activeChartInstances.forEach(c => c.destroy());
+  activeChartInstances = [];
+
+  // Filter strictly for BUY signals
+  const sec = document.getElementById('sectorResultFilter').value;
+  let chartData = screenResults.filter(r => r.signal === 'BUY');
+  if (sec !== 'all') chartData = chartData.filter(r => r.sector === sec);
+
+  if (!chartData.length) {
+    container.innerHTML = `
+      <div class="empty" style="grid-column: 1/-1; margin-top:40px;">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="m21 21-4.35-4.35"/><circle cx="11" cy="11" r="8"/></svg>
+        <p>No BUY signals found to chart yet. <br><br>Make sure you have run the screener, or adjust your sector filter.</p>
+      </div>`;
+    return;
+  }
+
+  // Draw a chart card for every BUY signal
+  chartData.forEach(r => {
+    const card = document.createElement('div');
+    card.className = 'chart-card';
+    const scol = SECTOR_COLORS[r.sector] || '#5a6480';
+    card.innerHTML = `
+      <div class="chart-header">
+        <span style="font-size:14px; font-weight:800;">${r.sym}</span>
+        <span class="sector-tag" style="color:${scol};border-color:${scol}30;background:${scol}12;">${r.sector}</span>
+        <span class="pill pill-buy" style="margin-left:8px;">BUY</span>
+        <span style="margin-left:auto; color:var(--muted);">Close: <span style="color:#fff;">₹${r.close.toFixed(2)}</span></span>
+      </div>
+      <div id="chart-render-${r.sym}" class="chart-render-area"></div>
+    `;
+    container.appendChild(card);
+
+    // Map history data stored in memory to Candlesticks
+    const seriesData = r.history.map((row, idx) => ({
+      x: idx + 1,
+      y: [row.o, row.h, row.l, row.c]
+    }));
+
+    const options = {
+      series: [{ data: seriesData }],
+      chart: {
+        type: 'candlestick',
+        height: '100%',
+        background: 'transparent',
+        toolbar: { show: false },
+        animations: { enabled: false }
+      },
+      theme: { mode: 'dark' },
+      grid: { borderColor: 'var(--border)' },
+      xaxis: { labels: { show: false }, axisBorder: { color: 'var(--border2)' }, axisTicks: { show: false }, tooltip: { enabled: false } },
+      yaxis: { labels: { style: { colors: 'var(--muted)', fontFamily: 'var(--mono)' }, formatter: (val) => "₹" + Math.round(val) } },
+      plotOptions: { candlestick: { colors: { upward: '#22c55e', downward: '#ef4444' }, wick: { useFillColor: true } } }
+    };
+
+    const chart = new ApexCharts(document.querySelector(`#chart-render-${r.sym}`), options);
+    chart.render();
+    activeChartInstances.push(chart);
+  });
 }
 
 function updateStats(){
@@ -637,6 +762,10 @@ function clearAll(){
   document.getElementById('resultBody').innerHTML=`<tr><td colspan="13"><div class="empty"><p>Cleared.</p></div></td></tr>`;
   document.getElementById('progressCard').classList.remove('show');
   ['st-scanned','st-buy','st-watch','st-ema','st-wma','st-err'].forEach(id=>document.getElementById(id).textContent='—');
+  
+  if (document.getElementById('view-charts').style.display === 'block') {
+    renderChartsView();
+  }
 }
 </script>
 </body>
