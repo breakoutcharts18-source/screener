@@ -3,18 +3,20 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>BREAKOUTCHARTS — NSE Sector Breadth Command Center</title>
+<title>BREAKOUTCHARTS — NSE Liquid Screener</title>
 <style>
-:root{--bg:#0d0f14;--surface:#13161e;--border:#1e2330;--border2:#252b3b;--text:#c8d0e0;--muted:#5a6480;--accent:#00b074;--green:#00b074;--red:#ef4444;--amber:#f59e0b;--cyan:#06b6d4;--purple:#a855f7;--font:'Inter','Segoe UI',system-ui,sans-serif;--mono:'JetBrains Mono','Fira Code',monospace;}
+:root{--bg:#0d0f14;--surface:#13161e;--border:#1e2330;--border2:#252b3b;--text:#c8d0e0;--muted:#5a6480;--accent:#3b82f6;--green:#22c55e;--red:#ef4444;--amber:#f59e0b;--cyan:#06b6d4;--purple:#a855f7;--font:'Inter','Segoe UI',system-ui,sans-serif;--mono:'JetBrains Mono','Fira Code',monospace;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13px;min-height:100vh;}
 
 header{display:flex;align-items:center;gap:12px;padding:14px 24px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:100;}
 .logo-mark{width:28px;height:28px;background:var(--accent);border-radius:6px;display:grid;place-items:center;font-weight:800;font-size:14px;color:#fff;}
 .logo-text{font-weight:700;font-size:13px;letter-spacing:.12em;color:#fff;}
-.logo-sub{font-size:10px;color:var(--cyan);letter-spacing:.08em;font-weight:600;}
+.logo-sub{font-size:10px;color:var(--muted);letter-spacing:.08em;}
 .dv{width:1px;height:28px;background:var(--border2);margin:0 8px;}
 .page-title{font-size:11px;font-weight:600;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;}
+.hdr-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.live-pill{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.25);border-radius:4px;font-size:9px;font-weight:700;letter-spacing:.1em;padding:3px 8px;}
 
 .main{max-width:1600px;margin:0 auto;padding:16px 20px;}
 
@@ -23,44 +25,44 @@ header{display:flex;align-items:center;gap:12px;padding:14px 24px;border-bottom:
 .top-bar-row{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;}
 .ctrl-group{display:flex;flex-direction:column;gap:5px;}
 label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
-select,input{background:var(--bg);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-family:var(--mono);font-size:12px;padding:8px 10px;outline:none;transition:border-color .15s;}
+select,input{background:var(--bg);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-family:var(--mono);font-size:12px;padding:8px 10px;outline:none;transition:border-color .15s;appearance:none;}
 select:focus,input:focus{border-color:var(--accent);}
+select option{background:var(--surface);}
 
+/* SECTOR CHIPS */
+.sector-row{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0 4px;}
+.schip{padding:4px 10px;border-radius:4px;font-size:10px;font-weight:600;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--muted);transition:all .12s;font-family:var(--font);}
+.schip:hover{border-color:var(--accent);color:var(--accent);}
+.schip.active{background:rgba(59,130,246,.12);border-color:var(--accent);color:var(--accent);}
+
+/* MAIN RUN BTN */
 .run-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;padding:12px 28px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:8px;letter-spacing:.04em;font-family:var(--font);white-space:nowrap;}
-.run-btn:hover{background:#009662;}
+.run-btn:hover{background:#2563eb;}
+.run-btn:disabled{background:var(--border2);color:var(--muted);cursor:not-allowed;}
 .stop-btn{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3);border-radius:8px;font-size:12px;font-weight:700;padding:12px 20px;cursor:pointer;font-family:var(--font);}
-
-/* LEADING VS LAGGING DUAL PANEL STYLE */
-.breadth-card{background:#000;border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:14px;}
-.breadth-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;font-size:12px;}
-.breadth-input-wrap{display:flex;align-items:center;gap:6px;}
-.breadth-input-wrap input{width:50px;text-align:center;padding:4px;font-weight:700;border-color:var(--border2);background:#111;}
-.breadth-center-title{font-size:14px;font-weight:700;color:#fff;letter-spacing:0.05em;}
-
-.split-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 10px;}
-.split-panel { background: #05070a; border: 1px solid var(--border2); border-radius: 8px; padding: 15px; }
-.panel-head { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;}
-
-.breadth-chart-body{display:flex;flex-direction:column;gap:6px;}
-.breadth-row{display:flex;align-items:center; cursor: pointer; border-radius: 4px; padding: 2px; transition: background 0.1s;}
-.breadth-row:hover { background: rgba(255,255,255,0.03); }
-.breadth-row.selected { background: rgba(0,176,116,0.08); border: 1px solid rgba(0,176,116,0.2); }
-.breadth-label{width:180px; text-align:right; padding-right:12px; font-size:12px; color:#fff; font-weight:500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
-.breadth-bar-bg{flex:1; height:24px; position:relative; display:flex; align-items:center; background: rgba(255,255,255,0.02); border-radius: 3px;}
-.breadth-bar-fill{height:100%; display:flex; align-items:center; padding-left:10px; color:#000; font-family:var(--mono); font-size:11px; font-weight:700; transition: width 0.4s ease; min-width:0px; border-radius: 3px;}
+.stop-btn:hover{background:rgba(239,68,68,.25);}
 
 /* PROGRESS */
 .progress-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:14px;display:none;}
 .progress-card.show{display:block;}
 .prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.prog-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.prog-nums{font-family:var(--mono);font-size:11px;color:var(--accent);}
 .prog-bar{height:4px;background:var(--border2);border-radius:2px;overflow:hidden;margin-bottom:10px;}
-.prog-fill{height:100%;background:var(--accent);width:0%;transition:width 0.2s;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--cyan));border-radius:2px;transition:width .3s;width:0%;}
 .prog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:4px;max-height:100px;overflow-y:auto;}
-.prog-item{font-size:9px;font-family:var(--mono);padding:2px 6px;border-radius:3px;}
-.prog-ok{color:var(--green);background:rgba(0,176,116,.06);}
+.prog-item{font-size:9px;font-family:var(--mono);padding:2px 6px;border-radius:3px;display:flex;align-items:center;gap:5px;}
+.prog-ok{color:var(--green);background:rgba(34,197,94,.06);}
 .prog-err{color:var(--red);background:rgba(239,68,68,.06);}
+.prog-wait{color:var(--amber);}
 
-/* LAYOUT */
+/* STATS */
+.stat-row{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px;}
+.stat-card .val{font-size:20px;font-weight:700;font-family:var(--mono);color:#fff;line-height:1;}
+.stat-card .lbl{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:4px;}
+
+/* CONDITIONS PANEL */
 .layout{display:grid;grid-template-columns:280px 1fr;gap:14px;}
 .cond-panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;height:fit-content;}
 .cond-panel-head{padding:11px 14px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.015);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;}
@@ -71,463 +73,754 @@ select:focus,input:focus{border-color:var(--accent);}
 .toggle-row:last-child{border-bottom:none;}
 .tl{font-size:10px;color:var(--text);flex:1;}
 .tl small{display:block;font-size:8px;color:var(--muted);margin-top:1px;font-family:var(--mono);}
-
-/* SWITCHES */
 .switch{position:relative;width:32px;height:17px;flex-shrink:0;}
 .switch input{opacity:0;width:0;height:0;}
 .slider{position:absolute;inset:0;background:var(--border2);border-radius:9px;cursor:pointer;transition:.2s;}
 .slider::before{content:'';position:absolute;width:11px;height:11px;left:3px;top:3px;background:var(--muted);border-radius:50%;transition:.2s;}
-.switch input:checked+.slider{background:rgba(0,176,116,.35);}
+.switch input:checked+.slider{background:rgba(59,130,246,.35);}
 .switch input:checked+.slider::before{transform:translateX(15px);background:var(--accent);}
 .field{margin-bottom:8px;}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.help{font-size:9px;color:var(--muted);margin-top:3px;line-height:1.4;}
 
-/* TABLE VIEW */
+/* TABLE */
 .table-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
 .table-head{display:flex;align-items:center;gap:8px;padding:11px 14px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.015);}
 .table-head h2{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text);}
 .table-actions{margin-left:auto;display:flex;gap:6px;align-items:center;}
-.btn-sm{padding:5px 11px;font-size:10px;background:var(--border2);color:var(--muted);border:1px solid var(--border);border-radius:5px;cursor:pointer;}
+.btn-sm{padding:5px 11px;font-size:10px;background:var(--border2);color:var(--muted);border:1px solid var(--border);border-radius:5px;cursor:pointer;font-family:var(--font);}
 .btn-sm:hover{color:var(--text);border-color:var(--accent);}
+.tbl-legend{padding:7px 14px;border-bottom:1px solid var(--border);font-size:9px;color:var(--muted);}
 .results-wrap{overflow-x:auto;max-height:65vh;overflow-y:auto;}
 table{width:100%;border-collapse:collapse;}
-thead th{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:8px 10px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--surface);cursor:pointer;}
-tbody tr{border-bottom:1px solid rgba(255,255,255,.04);}
+thead{position:sticky;top:0;z-index:10;}
+thead th{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:8px 10px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none;background:var(--surface);}
+thead th:hover{color:var(--text);}
+thead th.asc::after{content:' ↑';color:var(--accent);}
+thead th.desc::after{content:' ↓';color:var(--accent);}
+tbody tr{border-bottom:1px solid rgba(255,255,255,.04);transition:background .1s;}
 tbody tr:hover{background:rgba(255,255,255,.025);}
 td{padding:8px 10px;font-family:var(--mono);font-size:11px;white-space:nowrap;}
 .sym-cell{font-weight:700;font-size:12px;color:#fff;}
 .pos{color:var(--green);}
-.pill{display:inline-block;padding:2px 8px;border-radius:3px;font-size:9px;font-weight:700;}
-.pill-buy{background:rgba(0,176,116,.12);color:var(--green);border:1px solid rgba(0,176,116,.25);}
+.neg{color:var(--red);}
+.neu{color:var(--muted);}
+.pill{display:inline-block;padding:2px 8px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.08em;}
+.pill-buy{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.25);}
 .pill-watch{background:rgba(245,158,11,.12);color:var(--amber);border:1px solid rgba(245,158,11,.25);}
 .pill-fail{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.25);}
-.sector-tag{font-size:9px;padding:2px 5px;border-radius:3px;font-weight:600;background:var(--border2);color:var(--text);}
-.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:50px 20px;color:var(--muted);text-align:center;}
-.active-filter-pill { display: inline-block; background: rgba(6,182,212,0.15); color: #06b6d4; border: 1px solid rgba(6,182,212,0.3); padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 10px; }
+.ck{display:inline-block;width:6px;height:6px;border-radius:50%;margin:0 1px;}
+.ck-pass{background:var(--green);}
+.ck-fail{background:var(--red);opacity:.5;}
+.ck-off{background:var(--border2);opacity:.3;}
+.prox-bar{display:inline-block;width:44px;height:4px;background:var(--border2);border-radius:2px;vertical-align:middle;position:relative;overflow:hidden;}
+.prox-fill{height:100%;border-radius:2px;}
+.src-tag{font-size:8px;padding:1px 5px;border-radius:2px;font-weight:700;}
+.src-stooq{background:rgba(6,182,212,.1);color:var(--cyan);border:1px solid rgba(6,182,212,.2);}
+.src-yahoo{background:rgba(168,85,247,.1);color:var(--purple);border:1px solid rgba(168,85,247,.2);}
+.src-err{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:50px 20px;color:var(--muted);gap:10px;text-align:center;}
+.empty p{font-size:11px;max-width:340px;line-height:1.7;}
+.sector-tag{font-size:8px;padding:1px 5px;border-radius:2px;font-weight:600;background:var(--border2);color:var(--muted);}
+
+@media(max-width:1100px){.layout{grid-template-columns:1fr;}.stat-row{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:600px){.stat-row{grid-template-columns:1fr 1fr;}.main{padding:10px;}header{padding:10px 14px;}}
 </style>
 </head>
 <body>
 
 <header>
   <div class="logo-mark">B</div>
-  <div><div class="logo-text">BREAKOUTCHARTS</div><div class="logo-sub">2300+ NSE EQUITIES LOADED</div></div>
+  <div><div class="logo-text">BREAKOUTCHARTS</div><div class="logo-sub">AI TRADING JOURNAL</div></div>
   <div class="dv"></div>
-  <div class="page-title">Sector Breadth Dashboard & Matrix</div>
+  <div class="page-title">NSE Liquid Stock Screener</div>
+  <div class="hdr-right">
+    <span style="font-size:9px;color:var(--muted);font-family:var(--mono);" id="stockCount">470 stocks · 2L+ daily vol</span>
+    <div class="live-pill">EOD AUTO-FETCH</div>
+  </div>
 </header>
 
 <div class="main">
 
+  <!-- TOP CONTROLS -->
   <div class="top-bar">
     <div class="top-bar-row">
       <div class="ctrl-group">
-        <label>Universe Pool</label>
-        <select id="universe" style="width:260px;">
-          <option value="all">Full NSE Equity List (2,341 Stocks)</option>
-          <option value="nifty500" selected>Top 500 Broad Market</option>
-          <option value="nifty50">Top 50 Bluechips Only</option>
+        <label>Universe</label>
+        <select id="universe" onchange="updateCount()" style="width:180px;">
+          <option value="nifty50">Nifty 50 (50 stocks)</option>
+          <option value="nifty100">Nifty 100 (100 stocks)</option>
+          <option value="nifty200">Nifty 200 (200 stocks)</option>
+          <option value="liquid" selected>NSE Liquid 2L+ (~470 stocks)</option>
         </select>
       </div>
       <div class="ctrl-group">
-        <label>Historical Horizon</label>
-        <select id="period" style="width:140px;">
-          <option value="365" selected>1 Year Data</option>
-          <option value="730">2 Years Data</option>
+        <label>Sector Filter</label>
+        <select id="sectorFilter" onchange="updateCount()" style="width:160px;">
+          <option value="all">All Sectors</option>
+          <option value="BANK">Banking & Finance</option>
+          <option value="IT">Information Technology</option>
+          <option value="PHARMA">Pharma & Healthcare</option>
+          <option value="AUTO">Auto & Auto Ancillary</option>
+          <option value="METAL">Metals & Mining</option>
+          <option value="ENERGY">Energy & Power</option>
+          <option value="FMCG">FMCG & Consumer</option>
+          <option value="INFRA">Infrastructure & Cement</option>
+          <option value="REALTY">Realty</option>
+          <option value="MEDIA">Media & Telecom</option>
+          <option value="CHEM">Chemicals & Fertilizers</option>
+          <option value="TEXTILE">Textile & Apparel</option>
         </select>
       </div>
       <div class="ctrl-group">
-        <label>Engine Concurrency</label>
+        <label>Data Period</label>
+        <select id="period" style="width:150px;">
+          <option value="365" selected>1 Year</option>
+          <option value="548">1.5 Years</option>
+          <option value="730">2 Years</option>
+        </select>
+      </div>
+      <div class="ctrl-group">
+        <label>Concurrent Fetches</label>
         <select id="concurrency" style="width:130px;">
-          <option value="4">4 (Safe)</option>
-          <option value="8" selected>8 (Optimal)</option>
-          <option value="15">15 (Aggressive)</option>
+          <option value="1">1 (safe)</option>
+          <option value="2" selected>2 (balanced)</option>
+          <option value="3">3 (faster)</option>
         </select>
       </div>
       <div style="display:flex;gap:8px;align-items:flex-end;">
-        <button class="run-btn" id="runBtn" onclick="executeScan()">⚡ Run Multi-Sector Scan</button>
-        <button class="stop-btn" id="stopBtn" onclick="killScan()" style="display:none;">⏹ Stop</button>
+        <button class="run-btn" id="runBtn" onclick="runAll()">⚡ Screen All Stocks</button>
+        <button class="stop-btn" id="stopBtn" onclick="stopScan()" style="display:none;">⏹ Stop</button>
       </div>
+    </div>
+    <div style="margin-top:10px;">
+      <label style="margin-bottom:4px;">Sector Quick-Select</label>
+      <div class="sector-row" id="sectorChips"></div>
     </div>
   </div>
 
-  <!-- INTERACTIVE LEADING VS LAGGING PANEL SPLIT -->
-  <div class="breadth-card">
-    <div class="breadth-header">
-      <div class="breadth-input-wrap">
-        <span style="color:#fff;">% from 52 Week High Price &lt;</span>
-        <input type="number" id="highThreshold" value="5" min="1" max="20" oninput="refreshVisuals()">
-      </div>
-      <div class="breadth-center-title">Sector Performance Momentum Leaderboard</div>
-      <div style="color:var(--muted); font-size: 11px;">💡 <i>Click any sector below to filter matrix</i></div>
-    </div>
-
-    <div class="split-layout">
-      <!-- LEADING PANEL -->
-      <div class="split-panel" style="border-top: 3px solid var(--green);">
-        <div class="panel-head" style="color: var(--green);"><span class="dot-green"></span> Leading Sectors</div>
-        <div class="breadth-chart-body" id="leaderBars"></div>
-      </div>
-      
-      <!-- LAGGING PANEL -->
-      <div class="split-panel" style="border-top: 3px solid var(--red);">
-        <div class="panel-head" style="color: var(--red);"><span class="dot-green" style="background:var(--red)"></span> Lagging Sectors</div>
-        <div class="breadth-chart-body" id="laggerBars"></div>
-      </div>
-    </div>
-  </div>
-
+  <!-- PROGRESS -->
   <div class="progress-card" id="progressCard">
     <div class="prog-top">
-      <span style="font-weight:700;text-transform:uppercase;font-size:10px;color:var(--muted)">Processing Equities</span>
-      <span class="prog-nums" id="progNums" style="font-family:var(--mono);color:var(--accent)">0 / 0</span>
+      <span class="prog-label">Scanning NSE Stocks</span>
+      <span class="prog-nums" id="progNums">0 / 0</span>
     </div>
     <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
     <div class="prog-grid" id="progGrid"></div>
   </div>
 
+  <!-- STATS -->
+  <div class="stat-row">
+    <div class="stat-card"><div class="val" id="st-scanned">—</div><div class="lbl">Scanned</div></div>
+    <div class="stat-card"><div class="val" style="color:var(--green)" id="st-buy">—</div><div class="lbl">BUY Signal</div></div>
+    <div class="stat-card"><div class="val" style="color:var(--amber)" id="st-watch">—</div><div class="lbl">WATCH</div></div>
+    <div class="stat-card"><div class="val" style="color:var(--purple)" id="st-ema">—</div><div class="lbl">Near EMA20</div></div>
+    <div class="stat-card"><div class="val" style="color:var(--cyan)" id="st-wma">—</div><div class="lbl">WMA Aligned</div></div>
+    <div class="stat-card"><div class="val" style="color:var(--red)" id="st-err">—</div><div class="lbl">Failed</div></div>
+  </div>
+
   <div class="layout">
+
+    <!-- CONDITIONS -->
     <div class="cond-panel">
-      <div class="cond-panel-head">⚙️ Setup Filters</div>
+      <div class="cond-panel-head">⚙️ Conditions</div>
       <div class="cond-body">
+
         <div class="cond-group">
-          <div class="cond-group-head" style="color:var(--accent);">📈 WMA Aligned Filters</div>
-          <div class="toggle-row"><div class="tl">C1 · Close > WMA42<small>Monthly Trend Check</small></div><label class="switch"><input type="checkbox" id="c1" checked><span class="slider"></span></label></div>
-          <div class="toggle-row"><div class="tl">C2 · WMA42 > WMA84<small>Structure Check</small></div><label class="switch"><input type="checkbox" id="c2" checked><span class="slider"></span></label></div>
-          <div class="toggle-row"><div class="tl">C3 · Close > WMA30<small>Weekly Momentum</small></div><label class="switch"><input type="checkbox" id="c3" checked><span class="slider"></span></label></div>
+          <div class="cond-group-head" style="color:var(--accent);">📈 WMA Conditions</div>
+          <div class="toggle-row"><div class="tl">C1 · close > WMA42+1<small>monthly WMA(2)+1</small></div><label class="switch"><input type="checkbox" id="c1" checked><span class="slider"></span></label></div>
+          <div class="toggle-row"><div class="tl">C2 · WMA42 > WMA84+2<small>monthly WMA(2)>WMA(4)+2</small></div><label class="switch"><input type="checkbox" id="c2" checked><span class="slider"></span></label></div>
+          <div class="toggle-row"><div class="tl">C3 · close > WMA30+2<small>weekly WMA(6)+2</small></div><label class="switch"><input type="checkbox" id="c3" checked><span class="slider"></span></label></div>
+          <div class="toggle-row"><div class="tl">C4 · WMA30 > WMA60+2<small>weekly WMA(6)>WMA(12)+2</small></div><label class="switch"><input type="checkbox" id="c4" checked><span class="slider"></span></label></div>
+          <div class="toggle-row"><div class="tl">C5 · close > WMA12[4d]+2<small>lagged 12-day WMA</small></div><label class="switch"><input type="checkbox" id="c5" checked><span class="slider"></span></label></div>
+          <div class="toggle-row"><div class="tl">C6 · close > WMA20[2d]+2<small>lagged 20-day WMA</small></div><label class="switch"><input type="checkbox" id="c6" checked><span class="slider"></span></label></div>
         </div>
+
         <div class="cond-group">
-          <div class="cond-group-head" style="color:var(--amber);">💰 Price Band (₹)</div>
-          <div class="toggle-row"><div class="tl">C4 · Limit Filter</div><label class="switch"><input type="checkbox" id="c4" checked><span class="slider"></span></label></div>
-          <div class="field-row" style="margin-top:6px;">
-            <div class="field"><label>Min</label><input type="number" id="priceMin" value="10"></div>
-            <div class="field"><label>Max</label><input type="number" id="priceMax" value="20000"></div>
+          <div class="cond-group-head" style="color:var(--amber);">💰 Price Range</div>
+          <div class="toggle-row"><div class="tl">C7 · Price gate<small>min ≤ close ≤ max</small></div><label class="switch"><input type="checkbox" id="c7" checked><span class="slider"></span></label></div>
+          <div class="field-row" style="margin-top:8px;">
+            <div class="field"><label>Min ₹</label><input type="number" id="priceMin" value="25"></div>
+            <div class="field"><label>Max ₹</label><input type="number" id="priceMax" value="5000"></div>
           </div>
         </div>
+
         <div class="cond-group">
-          <div class="cond-group-head" style="color:var(--cyan);">📊 Volume Liquidity</div>
-          <div class="toggle-row"><div class="tl">C5 · Min Vol Threshold</div><label class="switch"><input type="checkbox" id="c5" checked><span class="slider"></span></label></div>
-          <div class="field" style="margin-top:6px;"><input type="number" id="minVol" value="50000"></div>
+          <div class="cond-group-head" style="color:var(--cyan);">📊 Volume</div>
+          <div class="toggle-row"><div class="tl">C8 · Weekly vol > min<small>last 5 days sum</small></div><label class="switch"><input type="checkbox" id="c8" checked><span class="slider"></span></label></div>
+          <div class="field" style="margin-top:8px;"><label>Min Weekly Volume</label><input type="number" id="minVol" value="1000000"><div class="help">1,000,000 = 10L weekly (2L/day avg)</div></div>
         </div>
+
+        <div class="cond-group" style="border-color:rgba(168,85,247,.3);">
+          <div class="cond-group-head" style="color:var(--purple);">🎯 Near 20 EMA</div>
+          <div class="toggle-row"><div class="tl">C9 · Within X% of EMA20<small>proximity filter</small></div><label class="switch"><input type="checkbox" id="c9" checked><span class="slider"></span></label></div>
+          <div class="field" style="margin-top:8px;"><label>Max % Distance</label><input type="number" id="ema20dist" value="3" min="0.5" max="20" step="0.5"><div class="help">3% = within 3% of EMA20</div></div>
+          <div class="toggle-row" style="margin-top:6px;"><div class="tl">Must be above EMA20<small>bullish side only</small></div><label class="switch"><input type="checkbox" id="c9above" checked><span class="slider"></span></label></div>
+        </div>
+
+        <div class="cond-group">
+          <div class="cond-group-head" style="color:var(--green);">⚙️ Optional</div>
+          <div class="toggle-row"><div class="tl">C10 · RSI 14 range<small>healthy momentum</small></div><label class="switch"><input type="checkbox" id="c10"><span class="slider"></span></label></div>
+          <div class="field-row" style="margin-top:6px;">
+            <div class="field"><label>RSI Min</label><input type="number" id="rsiMin" value="40"></div>
+            <div class="field"><label>RSI Max</label><input type="number" id="rsiMax" value="75"></div>
+          </div>
+        </div>
+
       </div>
     </div>
 
+    <!-- RESULTS TABLE -->
     <div class="table-card">
       <div class="table-head">
-        <h2>📋 Interactive Scanning Matrix <span id="activeFilterLabel"></span></h2>
+        <h2>📋 Screener Results</h2>
         <div class="table-actions">
-          <select id="sigFilter" onchange="refreshVisuals()" style="padding:4px;font-size:11px;">
-            <option value="all">All Evaluated Signals</option>
-            <option value="BUY">BUY Alerts Only</option>
-            <option value="WATCH">WATCH Alerts Only</option>
+          <select id="sigFilter" onchange="applyFilter()" style="width:auto;padding:4px 8px;font-size:10px;">
+            <option value="all">All Signals</option>
+            <option value="BUY">BUY only</option>
+            <option value="WATCH">WATCH only</option>
+            <option value="FAIL">FAIL only</option>
           </select>
-          <button class="btn-sm" id="clearFilterBtn" onclick="clearSectorFilter()" style="display:none; color:var(--amber);">Show All Sectors</button>
-          <button class="btn-sm" onclick="downloadCSV()">Export Spreadsheet</button>
+          <select id="sectorResultFilter" onchange="applyFilter()" style="width:auto;padding:4px 8px;font-size:10px;">
+            <option value="all">All Sectors</option>
+            <option value="BANK">Banking</option>
+            <option value="IT">IT</option>
+            <option value="PHARMA">Pharma</option>
+            <option value="AUTO">Auto</option>
+            <option value="METAL">Metals</option>
+            <option value="ENERGY">Energy</option>
+            <option value="FMCG">FMCG</option>
+            <option value="INFRA">Infra</option>
+            <option value="REALTY">Realty</option>
+            <option value="CHEM">Chemicals</option>
+          </select>
+          <button class="btn-sm" onclick="exportCSV()">↓ Export</button>
+          <button class="btn-sm" onclick="clearAll()">✕ Clear</button>
         </div>
+      </div>
+      <div class="tbl-legend">
+        <span style="color:var(--text);font-weight:700;margin-right:6px;">DOTS:</span>
+        C1 close>WMA42 · C2 WMA42>WMA84 · C3 close>WMA30 · C4 WMA30>WMA60 · C5 close>WMA12[4d] · C6 close>WMA20[2d] · C7 price · C8 vol · <span style="color:var(--purple)">C9 EMA20</span> · C10 RSI
       </div>
       <div class="results-wrap">
         <table>
           <thead>
             <tr>
-              <th onclick="sortGrid('sym')">Symbol</th>
-              <th onclick="sortGrid('sector')">Sector Category</th>
-              <th onclick="sortGrid('close')">Close (₹)</th>
-              <th onclick="sortGrid('dist52w')">Dist from 52wH</th>
-              <th onclick="sortGrid('high52w')">52w High (₹)</th>
+              <th onclick="sortBy('sym')">#&nbsp;Symbol</th>
+              <th onclick="sortBy('sector')">Sector</th>
+              <th onclick="sortBy('close')">Close ₹</th>
+              <th onclick="sortBy('chg')">Chg %</th>
               <th>Signal</th>
-              <th onclick="sortGrid('rsi')">RSI (14)</th>
-              <th onclick="sortGrid('volRat')">Vol Ratio</th>
+              <th>C1–C10</th>
+              <th onclick="sortBy('ema20dist')">EMA20 Dist</th>
+              <th onclick="sortBy('ema20')">EMA20</th>
+              <th onclick="sortBy('wma42')">WMA42</th>
+              <th onclick="sortBy('wma84')">WMA84</th>
+              <th onclick="sortBy('volRat')">Vol Ratio</th>
+              <th onclick="sortBy('rsi')">RSI14</th>
+              <th onclick="sortBy('passCount')">Score</th>
+              <th>Src</th>
             </tr>
           </thead>
           <tbody id="resultBody">
-            <tr><td colspan="8"><div class="empty">Activate the scanner button above to pull live proxy streams across the integrated 2,341 NSE list. <br><br>Click any Leading/Lagging sector block above to pull targeted matching sets instantly.</div></td></tr>
+            <tr><td colspan="14">
+              <div class="empty">
+                <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                <p>Select your universe and sector, configure conditions, then click <strong>Screen All Stocks</strong>.<br><br>The screener will auto-fetch EOD data for all NSE liquid stocks (2L+ daily volume) and run your formula.</p>
+              </div>
+            </td></tr>
           </tbody>
         </table>
       </div>
     </div>
+
   </div>
 </div>
 
 <script>
-const SECTOR_LIST = [
-  "Healthcare", "Capital Goods", "Telecommunication", "Services", "Financial Services", 
-  "Metals & Mining", "Auto", "Chemicals", "FMCG", "Diversified", "Consumer Durables", 
-  "Textiles", "Construction", "Consumer Services", "Realty", "Information Technology", 
-  "Power", "Oil, Gas & Consumable fuels", "Media Entertainment & Publication", "Utilities", "Forest Materials"
+// ═══════════════════════════════════════════
+// NSE LIQUID STOCKS — 2L+ DAILY AVG VOLUME
+// Format: [symbol, sector]
+// ═══════════════════════════════════════════
+const ALL_STOCKS = [
+  // NIFTY 50
+  ["RELIANCE","ENERGY"],["TCS","IT"],["HDFCBANK","BANK"],["ICICIBANK","BANK"],["INFY","IT"],
+  ["HINDUNILVR","FMCG"],["SBIN","BANK"],["BHARTIARTL","MEDIA"],["ITC","FMCG"],["KOTAKBANK","BANK"],
+  ["LT","INFRA"],["AXISBANK","BANK"],["ASIANPAINT","FMCG"],["MARUTI","AUTO"],["SUNPHARMA","PHARMA"],
+  ["TITAN","FMCG"],["BAJFINANCE","BANK"],["WIPRO","IT"],["HCLTECH","IT"],["ULTRACEMCO","INFRA"],
+  ["NTPC","ENERGY"],["POWERGRID","ENERGY"],["JSWSTEEL","METAL"],["TATAMOTORS","AUTO"],["TATASTEEL","METAL"],
+  ["ADANIENT","ENERGY"],["ADANIPORTS","INFRA"],["ONGC","ENERGY"],["COALINDIA","ENERGY"],["BPCL","ENERGY"],
+  ["BAJAJFINSV","BANK"],["NESTLEIND","FMCG"],["HDFCLIFE","BANK"],["SBILIFE","BANK"],["DIVISLAB","PHARMA"],
+  ["DRREDDY","PHARMA"],["CIPLA","PHARMA"],["TECHM","IT"],["GRASIM","INFRA"],["INDUSINDBK","BANK"],
+  ["EICHERMOT","AUTO"],["HEROMOTOCO","AUTO"],["BRITANNIA","FMCG"],["APOLLOHOSP","PHARMA"],["TATACONSUM","FMCG"],
+  ["HINDALCO","METAL"],["VEDL","METAL"],["M&M","AUTO"],["BAJAJ-AUTO","AUTO"],["LTIM","IT"],
+
+  // NIFTY NEXT 50
+  ["ADANIGREEN","ENERGY"],["ADANITRANS","ENERGY"],["AMBUJACEM","INFRA"],["AUROPHARMA","PHARMA"],
+  ["BANDHANBNK","BANK"],["BERGEPAINT","FMCG"],["BEL","INFRA"],["BOSCHLTD","AUTO"],["CANBK","BANK"],
+  ["CHOLAFIN","BANK"],["COLPAL","FMCG"],["CONCOR","INFRA"],["CUMMINSIND","AUTO"],["DLF","REALTY"],
+  ["FEDERALBNK","BANK"],["GAIL","ENERGY"],["GODREJCP","FMCG"],["GODREJPROP","REALTY"],["HAL","INFRA"],
+  ["HAVELLS","AUTO"],["IDFCFIRSTB","BANK"],["IGL","ENERGY"],["INDUSTOWER","MEDIA"],["IOC","ENERGY"],
+  ["IRCTC","INFRA"],["JINDALSTEL","METAL"],["JUBLFOOD","FMCG"],["LICHSGFIN","BANK"],["LTF","BANK"],
+  ["LUPIN","PHARMA"],["MARICO","FMCG"],["MCDOWELL-N","FMCG"],["MUTHOOTFIN","BANK"],["NMDC","METAL"],
+  ["PAGEIND","TEXTILE"],["PETRONET","ENERGY"],["PIIND","CHEM"],["PNB","BANK"],["RECLTD","BANK"],
+  ["SAIL","METAL"],["SHREECEM","INFRA"],["SIEMENS","AUTO"],["SRF","CHEM"],["TATAPOWER","ENERGY"],
+  ["TORNTPHARM","PHARMA"],["TRENT","FMCG"],["TVSMOTOR","AUTO"],["UBL","FMCG"],["UNIONBANK","BANK"],["UPL","CHEM"],
+
+  // BANKING & FINANCE
+  ["AUBANK","BANK"],["BANKBARODA","BANK"],["CENTRALBK","BANK"],["DCBBANK","BANK"],["EQUITASBNK","BANK"],
+  ["FINPIPE","BANK"],["HDFCAMC","BANK"],["ICICIGI","BANK"],["ICICIPRULI","BANK"],["IDBI","BANK"],
+  ["INDIANB","BANK"],["INDIAMART","IT"],["IOB","BANK"],["KARURVYSYA","BANK"],["KOTAKMAHIND","BANK"],
+  ["M&MFIN","BANK"],["MANAPPURAM","BANK"],["MASFIN","BANK"],["NAUKRI","IT"],["PFC","BANK"],
+  ["PNBHOUSING","BANK"],["RBLBANK","BANK"],["SHRIRAMFIN","BANK"],["SINDBANK","BANK"],["SOUTHBANK","BANK"],
+  ["UJJIVANSFB","BANK"],["YESBANK","BANK"],["ABCAPITAL","BANK"],["ANGELONE","BANK"],["BAJAJHLDNG","BANK"],
+
+  // IT & TECH
+  ["COFORGE","IT"],["CYIENT","IT"],["HAPPSTMNDS","IT"],["HEXAWARE","IT"],["KPITTECH","IT"],
+  ["LTTS","IT"],["MASTEK","IT"],["MPHASIS","IT"],["OFSS","IT"],["PERSISTENT","IT"],
+  ["ROUTE","IT"],["SONATSOFTW","IT"],["TATAELXSI","IT"],["ZENSARTECH","IT"],
+
+  // PHARMA & HEALTHCARE
+  ["ABBOTINDIA","PHARMA"],["ALKEM","PHARMA"],["APLLTD","PHARMA"],["BIOCON","PHARMA"],["ERIS","PHARMA"],
+  ["FORTIS","PHARMA"],["GLENMARK","PHARMA"],["GRANULES","PHARMA"],["IPCALAB","PHARMA"],["LALPATHLAB","PHARMA"],
+  ["LAURUSLABS","PHARMA"],["MAXHEALTH","PHARMA"],["METROPOLIS","PHARMA"],["NATCOPHARM","PHARMA"],["PFIZER","PHARMA"],
+  ["STAR","PHARMA"],["SYNGENE","PHARMA"],["TORNTPOWER","ENERGY"],["ZYDUSLIFE","PHARMA"],["MANKIND","PHARMA"],
+  ["MEDANTA","PHARMA"],["RAINBOW","PHARMA"],["AARTIIND","CHEM"],
+
+  // AUTO & AUTO ANCILLARY
+  ["AMARAJABAT","AUTO"],["ASHOKLEY","AUTO"],["BALKRISIND","AUTO"],["BHARATFORG","AUTO"],["EXIDEIND","AUTO"],
+  ["ESCORTS","AUTO"],["JBMA","AUTO"],["MRF","AUTO"],["MOTHERSON","AUTO"],["OLECTRA","AUTO"],
+  ["SCHAEFFLER","AUTO"],["SOLARINDS","CHEM"],["SUNDRMFAST","AUTO"],["SUPRAJIT","AUTO"],["TIINDIA","AUTO"],
+  ["WABCOINDIA","AUTO"],["TATACHEM","CHEM"],
+
+  // METALS & MINING
+  ["APL","METAL"],["APLAPOLLO","METAL"],["HINDZINC","METAL"],["JINDALPOLY","METAL"],["JSWENERGY","ENERGY"],
+  ["NATIONALUM","METAL"],["RATNAMANI","METAL"],["WELCORP","METAL"],["GMRINFRA","INFRA"],
+
+  // ENERGY & POWER
+  ["ADANIPOWER","ENERGY"],["CESC","ENERGY"],["CLEAN","ENERGY"],["GSPL","ENERGY"],["IEX","ENERGY"],
+  ["INDRAMEDCO","PHARMA"],["MAHABANK","BANK"],["NHPC","ENERGY"],["NLCINDIA","ENERGY"],["OIL","ENERGY"],
+  ["RITES","INFRA"],["SJVN","ENERGY"],["THERMAX","AUTO"],["TORNTPOWE","ENERGY"],
+
+  // FMCG & CONSUMER
+  ["BAJAJELEC","AUTO"],["BATAINDIA","FMCG"],["CAMPUS","FMCG"],["CROMPTON","AUTO"],["DABUR","FMCG"],
+  ["EMAMILTD","FMCG"],["GILLETTE","FMCG"],["GODREJIND","FMCG"],["JYOTHYLAB","FMCG"],["KANSAINER","FMCG"],
+  ["KAJARIACER","INFRA"],["NYKAA","FMCG"],["PATANJALI","FMCG"],["RADICO","FMCG"],["RAJESHEXPO","FMCG"],
+  ["RELAXO","FMCG"],["SAPPHIRE","TEXTILE"],["VAIBHAVGBL","FMCG"],["VBL","FMCG"],["VSTIND","FMCG"],
+  ["WHIRLPOOL","FMCG"],["ZOMATO","FMCG"],["PAYTM","IT"],["POLICYBZR","BANK"],["DMART","FMCG"],
+
+  // INFRA, CEMENT & REALTY
+  ["ACC","INFRA"],["ABBOTINDIA","PHARMA"],["BRIGADE","REALTY"],["CAMS","BANK"],["DALBHARAT","INFRA"],
+  ["ENGINERSIN","INFRA"],["GPPL","INFRA"],["HEIDELBERG","INFRA"],["HFCL","MEDIA"],["IRB","INFRA"],
+  ["IRFC","INFRA"],["JKCEMENT","INFRA"],["KNRCON","INFRA"],["MACROTECH","REALTY"],["MAHSEAMLES","METAL"],
+  ["NIACL","BANK"],["OBEROIRLTY","REALTY"],["PHOENIXLTD","REALTY"],["PRESTIGE","REALTY"],["PRSMJOHNSN","INFRA"],
+  ["RAMCOCEM","INFRA"],["SBIN","BANK"],["SOBHA","REALTY"],["SUNTECK","REALTY"],["SUPREMEIND","CHEM"],
+
+  // CHEMICALS & FERTILIZERS
+  ["ATUL","CHEM"],["BALAMINES","CHEM"],["BASF","CHEM"],["CASTROLIND","ENERGY"],["CHAMBLFERT","CHEM"],
+  ["COROMANDEL","CHEM"],["DEEPAKNTR","CHEM"],["GNFC","CHEM"],["GSFC","CHEM"],["NAVINFLUOR","CHEM"],
+  ["NOCIL","CHEM"],["PCBL","CHEM"],["PIDILITIND","CHEM"],["RALLIS","CHEM"],["SUDARSCHEM","CHEM"],
+  ["TATACHEM","CHEM"],["VINATI","CHEM"],["VINATIORGA","CHEM"],
+
+  // MEDIA & TELECOM
+  ["NETWORK18","MEDIA"],["PVRINOX","MEDIA"],["SUNTV","MEDIA"],["TATACOMM","MEDIA"],["ZEEL","MEDIA"],
+
+  // TEXTILE
+  ["ARVIND","TEXTILE"],["GOKEX","TEXTILE"],["RAYMOND","TEXTILE"],["TRIDENT","TEXTILE"],["VGUARD","AUTO"],
+  ["WELSPUNLIV","TEXTILE"],["KITEX","TEXTILE"],
+
+  // REALTY & MISC LIQUID
+  ["EIHOTEL","FMCG"],["INDHOTEL","FMCG"],["LEMONTREE","FMCG"],["MAHINDCIE","AUTO"],["MAHLOG","INFRA"],
+  ["MMFINANCE","BANK"],["MTAR","AUTO"],["NUVOCO","INFRA"],["POWERINDIA","ENERGY"],["SAREGAMA","MEDIA"],
+  ["TANLA","IT"],["TEJASNET","MEDIA"],["TIMKEN","AUTO"],["TRITURBINE","ENERGY"],["VSTINDS","FMCG"],
+  ["WELENT","INFRA"],["WPIL","AUTO"],["XCHANGING","IT"],["ZFCVINDIA","AUTO"],
+
+  // ADDITIONAL HIGH-VOLUME NSE STOCKS
+  ["ABFRL","TEXTILE"],["ALOKINDS","TEXTILE"],["AFFLE","IT"],["ANANTRAJ","REALTY"],["APTUS","BANK"],
+  ["ASTRAL","INFRA"],["BSOFT","IT"],["CARBORUNIV","CHEM"],["CARTRADE","AUTO"],["CDSL","BANK"],
+  ["CLEAN","ENERGY"],["CSBBANK","BANK"],["DELHIVERY","INFRA"],["DEVYANI","FMCG"],["DIXON","AUTO"],
+  ["EASEMYTRIP","FMCG"],["EDELWEISS","BANK"],["ELECON","AUTO"],["EMUDHRA","IT"],["EPIGRAL","CHEM"],
+  ["FINEORG","CHEM"],["FINOLEXCAB","AUTO"],["GMDCLTD","METAL"],["GRAPHITE","METAL"],["GREENPANEL","INFRA"],
+  ["HAPPYFORGE","AUTO"],["HBLPOWER","AUTO"],["HINDPETRO","ENERGY"],["HOMEFIRST","BANK"],["IBREALEST","REALTY"],
+  ["IDEAFORGE","IT"],["IFBIND","AUTO"],["INDIACEM","INFRA"],["INGERRAND","AUTO"],["INTELLECT","IT"],
+  ["INVENTURE","BANK"],["IOLCP","CHEM"],["JKLAKSHMI","INFRA"],["JSWHL","METAL"],["JUSTDIAL","IT"],
+  ["KALPATPOWR","ENERGY"],["KFINTECH","BANK"],["KIRLOSENG","AUTO"],["KRBL","FMCG"],["LICI","BANK"],
+  ["LINDEINDIA","CHEM"],["LLOYDSME","AUTO"],["LODHA","REALTY"],["MAPMYINDIA","IT"],["MEDPLUS","PHARMA"],
+  ["METROBRAND","FMCG"],["MFSL","BANK"],["MIDHANI","METAL"],["MINDTREE","IT"],["MOTILALOFS","BANK"],
+  ["MSTCINDIA","INFRA"],["NESCO","REALTY"],["NETWORK18","MEDIA"],["NSLNISP","METAL"],["ONEPOINT","BANK"],
+  ["OPTIEMUS","IT"],["PGHH","FMCG"],["PRAJIND","ENERGY"],["PRINCEPIPE","INFRA"],["RAIN","CHEM"],
+  ["RATEGAIN","IT"],["REDINGTON","IT"],["ROSSARI","CHEM"],["SAFARI","FMCG"],["SAGCEM","INFRA"],
+  ["SIGNATURE","BANK"],["SKIPPER","INFRA"],["SMSPHARMA","PHARMA"],["SOLARA","PHARMA"],["SONACOMS","AUTO"],
+  ["SPANDANA","BANK"],["SRTRANSFIN","BANK"],["STARHEALTH","BANK"],["SUMICHEM","CHEM"],["SUVEN","PHARMA"],
+  ["SWSOLAR","ENERGY"],["TECHNOE","IT"],["TEGA","METAL"],["TITAGARH","INFRA"],["UCOBANK","BANK"],
+  ["UJJIVAN","BANK"],["UTIAMC","BANK"],["VARROC","AUTO"],["VGUARD","AUTO"],["VIRINCHI","IT"],
+  ["WAAREEENE","ENERGY"],["WATERBASE","FMCG"],["WELCORP","METAL"],["WESTLIFE","FMCG"],["WINDMACHINES","ENERGY"],
 ];
 
-const COMPRESSED_DATA = `
-20MICRONS:4,21STCENMGM:9,360ONE:9,3BBLACKBIO:0,3IINFOLTD:15,3MINDIA:9,3PLAND:14,5PAISA:4,63MOONS:15,A2ZINFRA:12,AAATECH:15,AADHARHFC:4,AAKASH:9,AAREYDRUGS:0,AARNAV:9,AARON:9,AARTECH:15,AARTIDRUGS:0,AARTIIND:7,AARTIPHARM:0,AARTISURF:9,AARVI:9,AAVAS:4,ABANSENT:9,ABB:1,ABBOTINDIA:9,ABCAPITAL:4,ABCOTS:11,ABDL:8,ABFRL:11,ABINFRA:12,ABLBL:0,ABMINTLLTD:9,ABMKNO:9,ABREL:14,ABSLAMC:0,ACC:9,ACCELYA:9,ACCURACY:3,ACE:12,ACEINTEG:9,ACI:7,ACL:12,ACMESOLAR:9,ACSTECH:15,ACUTAAS:7,ADANIENSOL:16,ADANIENT:9,ADANIGREEN:16,ADANIPORTS:9,ADANIPOWER:16,ADFFOODS:8,ADL:20,ADOR:9,ADROITINFO:15,ADSL:15,ADVAIT:15,ADVANCE:0,ADVANIHOTR:13,ADVENTHTL:13,ADVENZYMES:15,AEGISLOG:3,AEGISVOPAK:9,AEPL:12,AEQUS:9,AEROENTER:9,AEROFLEX:9,AERONEU:9,AETHER:9,AFCONS:12,AFFLE:9,AFFORDABLE:6,AFIL:9,AFSL:4,AGARIND:9,AGARWALEYE:0,AGI:9,AGIIL:12,AGRITECH:15,AGROPHOS:8,AHCL:0,AHLADA:12,AHLEAST:13,AHLUCONT:9,AHLWEST:13,AIAENG:12,AIIL:4,AIRAN:9,AIROLAM:9,AJANTPHARM:0,AJAXENGG:12,AJMERA:12,AJOONI:0,AKASH:12,AKCAPIT:4,AKG:9,AKI:9,AKSHAR:11,AKSHARCHEM:7,AKSHOPTFBR:9,AKUMS:0,ALANKIT:15,ALBERTDAVD:9,ALEMBICLTD:9,ALGOQUANT:15,ALICON:5,ALIVUS:0,ALKALI:5,ALKEM:9,ALKYLAMINE:7,ALLCARGO:3,ALLDIGI:15,ALLTIME:7,ALMONDZ:4,ALOKINDS:9,ALPA:9,ALPHAGEO:9,AMAGI:0,AMANTA:0,AMBALALSA:9,AMBER:9,AMBICAAGAR:9,AMBIKCO:11,AMBUJACEM:12,AMDIND:9,AMIRCHAND:9,AMJLAND:14,AMNPLST:7,AMRUTANJAN:0,ANANDRATHI:4,ANANTRAJ:9,ANDHRAPAP:20,ANDHRSUGAR:8,ANGELONE:9,ANIKINDS:9,ANMOL:9,ANTELOPUS:16,ANTGRAPHIC:9,ANTHEM:0,ANUHPHR:0,ANUP:12,ANURAS:9,APARINDS:9,APCL:12,APCOTEXIND:9,APEX:8,APLAPOLLO:5,APLLTD:0,APOLLO:4,APOLLOHOSP:0,APOLLOPIPE:9,APOLLOTYRE:6,APOLSINHOT:13,APTECHT:15,APTUS:4,AQYLON:9,ARCHIDPLY:20,ARCHIES:9,ARE&M:16,ARENTERP:9,ARFIN:9,ARIES:8,ARIHANT:9,ARIHANTCAP:4,ARIHANTSUP:9,ARIS:12,ARKADE:14,ARMANFIN:4,AROGRANITE:9,ARROWGREEN:15,ARSSBL:9,ARTEMISMED:0,ARTNIRMAN:9,ARVEE:9,ARVIND:9,ARVINDFASN:9,ARVSMART:9,ASAHIINDIA:9,ASAHISONG:9,ASAL:6,ASALCBR:8,ASHAPURMIN:7,ASHIANA:9,ASHIKA:4,ASHIMASYN:9,ASHOKA:12,ASHOKAMET:9,ASHOKLEY:14,ASIANENE:16,ASIANHOTNR:13,ASIANPAINT:9,ASIANTILES:9,ASKAUTOLTD:6,ASMS:9,ASPINWALL:11,ASTAR:9,ASTEC:0,ASTERDM:0,ASTRAL:9,ASTRAMICRO:4,ASTRAZEN:0,ASTRON:20,ATALREAL:15,ATAM:1,ATGL:19,ATHERENERG:16,ATL:3,ATLANTAA:9,ATLANTAELE:16,ATLASCYCLE:9,ATUL:7,ATULAUTO:6,AUBANK:4,AURIGROW:9,AURIONPRO:9,AUROPHARMA:0,AURUM:15,AUSOMENT:9,AUTOAXLES:6,AUTOIND:6,AVADHSUGAR:8,AVALON:15,AVANTEL:9,AVANTIFEED:9,AVG:3,AVL:9,AVONMORE:4,AVROIND:9,AVTNPL:9,AWFIS:9,AWHCL:19,AWL:9,AXISBANK:4,AXISCADES:15,AXITA:11,AYE:4,AYMSYNTEX:9,AZAD:12,BAFNAPH:0,BAGFILMS:0,BAIDFIN:9,BAJAJ-AUTO:6,BAJAJCON:10,BAJAJELEC:10,BAJAJFINSV:9,BAJAJHCARE:0,BAJAJHFL:4,BAJAJHIND:8,BAJAJHLDNG:4,BAJAJINDEF:9,BAJAJST:5,BAJEL:12,BAJFINANCE:4,BALAJEE:8,BALAJITELE:18,BALAMINES:9,BALAXI:0,BALKRISHNA:20,BALKRISIND:9,BALMLAWRIE:9,BALPHARMA:0,BALRAMCHIN:9,BALUforge:9,BANARBEADS:9,BANARISUG:8,BANCOINDIA:9,BANDHANBNK:4,BANG:9,BANKA:0,BANKBARODA:4,BANKINDIA:4,BANSALWIRE:5,BANSWRAS:9,BASF:9,BASML:11,BATAINDIA:9,BATLIBOI:9,BAYERCROP:9,BBL:9,BBOX:9,BBTC:9,BBTCL:9,BCG:9,BCLIND:9,BCONCEPTS:9,BCPL:12,BDL:9,BEARDSELL:9,BECTORFOOD:8,BEDMUTHA:9,BEEKAY:5,BEL:1,BELLACASA:9,BELRISE:9,BEML:9,BENGALASM:9,BEPL:7,BERGEPAINT:9,BESTAGRO:0,BETA:0,BFINVEST:4,BFUTILITIE:9,BGRENERGY:16,BHAGCHEM:7,BHAGERIA:9,BHAGYANGR:9,BHANDARI:9,BHARATCOAL:9,BHARATFORG:9,BHARATGEAR:6,BHARATRAS:9,BHARATSE:9,BHARATWIRE:5,BHARTIARTL:2,BHARTIHEXA:9,BHEL:1,BI:9,BIGBLOC:12,BIKAJI:8,BIL:9,BILVYAPAR:9,BIMETAL:5,BIOCON:0,BIOFILCHEM:0,BIRLACABLE:9,BIRLACORPN:9,BIRLAMONEY:9,BIRLANU:9,BIRLAPREC:15,BLACKBUCK:9,BLACKROSE:9,BLAL:4,BLBLIMITED:9,BLIL:4,BLISSGVS:0,BLKASHYAP:9,BLS:9,BLSE:9,BLUECOAST:13,BLUEDART:3,BLUEJET:0,BLUESTARCO:9,BLUESTONE:0,BLUSPRING:9,BMWVENTLTD:9,BNAGROCHEM:7,BNALTD:9,BODALCHEM:7,BOHRAIND:9,BOMDYEING:9,BONLON:9,BORANA:11,BOROLTD:9,BORORENEW:9,BOROSCI:9,BOSCH-HCIL:9,BOSCHLTD:9,BPCL:17,BPL:9,BRIGADE:14,BRIGHOTEL:13,BRITANNIA:8,BRNL:2,BROOKS:9,BSE:9,BSHSL:9,BSL:9,BSOFT:9,BTML:0,BTTL:15,BUILDPRO:12,BUTTERFLY:10,BVCL:12,BYKE:0,CALSOFT:15,CAMLINFINE:9,CAMPUS:9,CAMS:15,CANBK:4,CANFINHOME:9,CANHLIFE:0,CANTABIL:9,CAPACITE:12,CAPILLARY:15,CAPITALSFB:4,CAPLIPOINT:9,CAPTRUST:4,CARBORUNIV:9,CARERATING:9,CARRARO:9,CARTRADE:15,CARYSIL:9,CASTROLIND:9,CCAVENUE:9,CCCL:12,CCHHL:0,CCL:9,CDSL:9,CEATLTD:9,CEIGALL:9,CEINSYS:15,CELEBRITY:9,CELLO:9,CEMPRO:12,CENTENKA:9,CENTEXT:9,CENTRALBK:4,CENTRUM:4,CENTUM:16,CENTURYPLY:20,CERA:9,CESC:9,CEWATER:9,CGCL:4,CGPOWER:16,CHALET:13,CHAMBLFERT:7,CHEMBOND:15,CHEMBONDCH:7,CHEMCON:7,CHEMFAB:7,CHEMPLASTS:7,CHENNPETRO:17,CHEVIOT:9,CHOICEIN:9,CHOLAFIN:4,CHOLAHLDNG:4,CIEINDIA:6,CIFL:4,CINELINE:9,CINEVISTA:9,CIPLA:0,CLEAN:15,CLEANMAX:16,CLEDUCATE:9,CLSEL:9,CMPDI:9,CMRGREEN:15,CMSINFO:15,CNL:15,COALINDIA:5,COASTCORP:9,COCHINSHIP:9,COCKERILL:9,COFFEEDAY:8,COFORGE:9,COHANCE:0,COLPAL:9,COMFINTE:15,COMPUSOFT:15,COMSYN:9,CONCOR:3,CONCORDBIO:0,CONFIPET:17,CONSOFINVT:4,CONTROLPR:18,CORALFINAC:4,CORDSCABLE:9,COROMANDEL:9,CORONA:0,COSMOFIRST:9,COUNCODOS:9,CPCAP:4,CPEDU:15,CPPLUS:15,CRAFTSMAN:6,CRAMC:4,CREATIVEYE:9,CREDITACC:4,CREST:9,CRISIL:9,CRIZAC:9,CROMPTON:10,CROWN:9,CSBBANK:4,CSLFINANCE:4,CTE:15,CUB:4,CUBEXTUB:9,CUMMINSIND:1,CUPID:9,CURAA:15,CYBERMEDIA:0,CYBERTECH:15,CYIENT:9,CYIENTDLM:9,DABUR:8,DAICHI:9,DALBHARAT:9,DALMIASUG:8,DAMCAPITAL:4,DAMODARIND:9,DANGEE:9,DATAMATICS:9,DATAPATTNS:9,DAVANGERE:8,DBCORP:9,DBEIL:12,DBL:12,DBOL:0,DBREALTY:14,DBSTOCKBRO:9,DCAL:9,DBBBANK:4,DCI:15,DCM:9,DCMFINSERV:4,DCMNVL:9,DCMSHRIRAM:9,DCMSIL:9,DCMSRIND:9,DCW:9,DCXINDIA:9,DDEVPLSTIK:9,DECCANCE:12,DECNGOLD:9,DEEDEV:12,DEEPAKFERT:7,DEEPAKNTR:7,DEEPINDS:9,DELHIVERY:3,DELPHIFX:9,DELTACORP:9,DELTAMAGNT:9,DEN:2,DENORA:9,DENTA:12,DEVIT:15,DEVX:9,DEVYANI:13,DGCONTENT:9,DHAMPURSUG:8,DHANBANK:4,DHANUKA:15,DHARMAJ:9,DHRUV:9,DHUNINV:4,DIACABS:12,DIAMINESQ:7,DIAMONDYD:9,DICIND:9,DIFFNKG:12,DIGIDRIVE:9,DIGISPICE:15,DIGITIDE:9,DIGJAMLMTD:9,DISAQ:9,DISHTV:18,DIVGIITTS:9,DIVISLAB:0,DIXON:15,DJML:0,DLF:14,DLINKINDIA:9,DMART:9,DMCC:7,DNAMEDIA:0,DODLA:8,DOLATALGO:15,DOLLAR:9,DOLPHIN:9,DOMS:9,DONEAR:9,DPABHUSHAN:9,DPSCLTD:9,DPWIRES:5,DRAGARWQ:0,DRCSYSTEMS:9,DREAMFOLKS:9,DREDGECORP:9,DRREDDY:0,DSFCL:7,DSSL:9,DTIL:8,DUCON:15,DVL:9,DWARKESH:8,DYCL:9,DYNAMATECH:15,DYNPRO:9,E2E:2,EASEMYTRIP:9,EASTSILK:11,EBGNG:16,ECLERX:9,ECOSMOBLTY:0,EDELWEISS:4,EFCIL:9,EICHERMOT:6,EIDPARRY:9,EIEL:12,EIFFL:8,EIHAHOTELS:13,EIHOTEL:9,EIMCOELECO:9,EKC:9,ELANTAS:9,ELCIDIN:4,ELDEHSG:9,ELECON:12,ELECTCAST:5,ELECTHERM:16,ELGIEQUIP:1,ELGIRUBCO:9,ELIN:16,ELITECON:9,ELLEN:17,ELPROINTL:9,EMAMILTD:9,EMAMIPAP:20,EMAMIREAL:14,EMBDL:14,EMCURE:0,EMIL:16,EMKAY:4,EMMBI:9,EMMVEE:16,EMPOWER:16,EMSLIMITED:9,EMUDHRA:9,ENDURANCE:15,ENERGYDEV:16,ENGINERSIN:12,ENIL:18,ENRIN:16,ENTERO:0,EPACK:9,EPACKPEB:15,EPIGRAL:9,EPL:9,EQUIPPP:15,EQUITASBNK:4,ERIS:0,ESABINDIA:9,ESAFSFB:4,ESCORTS:9,ESSARSHPNG:3,ESSENTIA:9,ESTER:9,ETERNAL:9,ETHOSLTD:9,EUREKAFORB:9,EUROBOND:9,EUROPRATIK:9,EUROTEXIND:9,EVEREADY:9,EVERESTIND:9,EXCELINDUS:9,EXCELSOFT:15,EXICOM:2,EXIDEIND:9,EXPLEOSOL:9,EXXARO:9,FABTECH:15,FACT:7,FAIRCHEMOR:7,FAZE3Q:9,FCL:7,FCSSOFT:15,FDC:9,FEDDERSHOL:9,FEDERALBNK:4,FEDFINA:4,FERMENTA:0,FIBERWEB:9,FIEMIND:9,FILATEX:9,FILATFASH:9,FINCABLES:9,FINEORG:7,FINKURVE:4,FINOPB:4,FINPIPE:9,FIRSTCRY:9,FISCHER:0,FIVESTAR:4,FLAIR:9,FLEXITUFF:9,FLUOROCHEM:7,FMGOETZE:9,FMNL:2,FOCUS:9,FOODSIN:8,FORCEMOT:6,FORTIS:0,FOSECOIND:9,FRACTAL:9,FRONTSP:9,FSL:9,FUSION:4,GABRIEL:9,GAEL:9,GAIL:17,GALAPREC:12,GALAXYSURF:9,GALLANTT:9,GANDHAR:17,GANDHITUBE:5,GANECOS:9,GANESHBE:9,GANESHCP:10,GANESHHOU:9,GANGAFORGE:9,GANGESSECU:4,GARFIBRES:15,GARUDA:12,GATECH:15,GATECHDVR:15,GATEWAY:9,GAUDIUMIVF:0,GAYAHWS:9,GAYAPROJ:12,GCSL:9,GEECEE:9,GEEKAYWIRE:5,GEMAROMA:9,GENCON:12,GENESYS:9,GENUSPAPER:20,GENUSPOWER:12,GEOJITFSL:4,GESHIP:9,GFLLIMITED:9,GHCL:9,GHCLTEXTIL:11,GICHSGFIN:4,GICL:9,GICRE:9,GILLANDERS:14,GILLETTE:9,GINNIFILA:9,GIPCL:16,GKENERGY:16,GKSL:9,GKWLIMITED:9,GLAND:0,GLAXO:0,GLENMARK:0,GLFL:4,GLOBAL:9,GLOBALE:9,GLOBALVECT:9,GLOBE:9,GLOBECIVIL:12,GLOBUSSPR:9,GLOSTERLTD:9,GLOTTIS:9,GMBREW:8,GMDCLTD:14,GMMPFAUDLR:9,GMRAIRPORT:9,GMRP&UI:12,GNA:9,GNFC:7,GNRL:9,GOACARBON:9,GOCLCORP:9,GOCOLORS:9,GODAVARIB:0,GODFRYPHLP:9,GODIGIT:15,GODREJAGRO:8,GODREJCP:10,GODREJIND:9,GODREJPROP:14,GOKEX:9,GOKUL:17,GOKULAGRO:8,GOLDIAM:9,GOLDTECH:15,GOODLUCK:9,GOODYEAR:9,GOPAL:9,GOYALALUM:5,GPIL:16,GPPL:9,GPTHEALTH:0,GPTINFRA:12,GRADIENTE:15,GRANDOAK:8,GRANULES:9,GRAPHITE:9,GRASIM:9,GRAUWEIL:9,GRAVISSHO:0,GRAVITA:9,GREAVESCOT:11,GREENLAM:9,GREENPANEL:20,GREENPLY:20,GREENPOWER:16,GRINDWELL:9,GRINFRA:12,GRMOVER:9,GROBTEA:8,GROWW:9,GRPLTD:9,GRSE:12,GRWRHITECH:15,GSFC:7,GSLSU:9,GSPCROP:9,GSS:15,GTECJAINX:9,GTL:9,GTLINFRA:12,GTPL:9,GUFICBIO:0,GUJALKALI:7,GUJAPOLLO:9,GUJGASLTD:17,GUJRAFFIA:9,GUJTHEM:0,GULFOILLUB:17,GULFPETRO:17,GULPOLY:9,GVKPIL:12,GVPIL:16,GVPTECH:15,GVT&D:9,HAL:1,HALDER:9,HALDYNGL:9,HALEOSLABS:9,HAPPSTMNDS:15,HAPPYFORGE:9,HARDWYN:9,HARIOMPIPE:9,HARRMALAYA:9,HARSHA:12,HATHWAY:9,HATSUN:8,HAVELLS:9,HAVISHA:0,HAWKINCOOK:9,HBESD:14,HBLENGINE:12,HBSL:9,HCC:12,HCG:0,HCL-INSYS:15,HCLTECH:15,HDBFS:4,HDFCAMC:4,HDFCBANK:4,HDFCLIFE:0,HEADSUP:9,HEALTHX:0,HECPROJECT:12,HEG:9,HEIDELBERG:12,HEMIPROP:14,HERANBA:9,HERITGFOOD:8,HEROMOTOCO:6,HESTERBIO:0,HEXAGON:9,HEXATRADEX:9,HEXT:15,HFCL:9,HGINFRA:12,HGM:9,HGS:9,HIKAL:9,HILINFRA:12,HILTON:5,HIMATSEIDE:9,HINDALCO:5,HINDCOMPOS:9,HINDCON:7,HINDCOPPER:5,HINDOILEXP:17,HINDPETRO:17,HINDUNILVR:8,HINDWAREAP:9,HINDZINC:5,HIRECT:9,HISARMETAL:5,HITECH:15,HITECHCORP:15,HITECHGEAR:15,HLEGLAS:9,HLVLTD:9,HMAAGRO:8,HMVL:0,HNDFDS:8,HOMEFIRST:4,HONASA:10,HONAUT:6,HONDAPOWER:16,HPAL:9,HPIL:9,HPL:16,HSCL:7,HTMEDIA:0,HUBTOWN:9,HUDCO:14,HUHTAMAKI:9,HYBRIDFIN:4,HYUNDAI:6,IBULLSLTD:9,ICDSLTD:9,ICEMAKE:9,ICICIAMC:4,ICICIBANK:4,ICICIGI:9,ICICIPRULI:0,ICIL:9,ICRA:9,IDBI:4,IDEA:2,IDEAFORGE:15,IDFCFIRSTB:4,IEX:16,IFBAGRO:8,IFBIND:9,IFCI:9,IFGLEXPOR:9,IGARASHI:6,IGCL:9,IGIL:9,IGL:17,IGPL:7,IIFL:4,IIFLCAPS:4,IITL:4,IKIO:15,IKS:9,IMAGICAA:18,IMFA:5,IMPAL:6,INA:16,INCREDIBLE:9,INDBANK:4,INDGN:9,INDHOTEL:13,INDIACEM:12,INDIAGLYCO:9,INDIAMART:9,INDIANB:4,INDIANCARD:9,INDIANHUME:9,INDIASHLTR:4,INDIGO:3,INDIGOPNTS:9,INDIQUBE:9,INDNIPPON:16,INDOAMIN:9,INDOBORAX:7,INDOco:0,INDOFARM:1,INDORAMA:9,INDOSTAR:4,INDOTECH:15,INDOTHAI:4,INDOUS:0,INDOWIND:16,INDPRUD:4,INDRAMEDCO:0,INDSWFTLAB:9,INDTERRAIN:9,INDUSINDBK:4,INDUSTOWER:2,INFOBEAN:15,INFOMEDIA:0,INFY:15,INGERRAND:9,INNOVACAP:9,INNOVANA:9,INNOVISION:9,INOXGREEN:16,INOXINDIA:9,INOXWIND:9,INSECTICID:9,INSPIRISYS:9,INTELLECT:9,INTENTECH:15,INTERARCH:12,INTLCONV:9,INVENTURE:4,INVPRECQ:4,IOB:4,IOC:17,IOLCP:0,IONEXCHANG:9,IPCALAB:9,IPL:9,IRB:12,IRCON:9,IRCTC:13,IREDA:16,IRFC:4,IRIS:15,IRISDOREME:9,IRMENERGY:16,ISFT:15,ISGEC:12,ISHANCH:7,ITC:8,ITCHOTELS:13,ITDC:13,ITI:9,IVALUE:15,IVC:4,IVP:9,IWP:20,IXIGO:15,IZMO:9,J&KBANK:4,JAGRAN:9,JAGSNPHARM:0,JAIBALAJI:9,JAICORPLTD:9,JAINREC:9,JAIPURKURT:9,JAMNAAUTO:6,JARO:15,JASH:12,JAYAGROGN:7,JAYBARMARU:9,JAYKAY:9,JAYNECOIND:9,JAYSREETEA:8,JBCHEPHARM:0,JBMA:6,JETFREIGHT:3,JGCHEM:7,JHS:9,JINDALPHOT:9,JINDALPOLY:18,JINDALSAW:9,JINDALSTEL:5,JINDRILL:9,JINDWORLD:9,JIOFIN:4,JISLDVREQS:9,JISLJALEQS:9,JITFINFRA:12,JKCEMENT:12,JKIL:12,JKIPL:9,JKLAKSHMI:12,JKPAPER:20,JKTYRE:6,JLHL:0,JMA:6,JMFINANCIL:4,JNKINDIA:9,JOCIL:9,JPOLYINVST:4,JPPOWER:16,JSFB:4,JSL:9,JSLL:0,JSWCEMENT:12,JSWDULUX:9,JSWENERGY:16,JSWHL:9,JSWINFRA:12,JSWSTEEL:5,JTEKTINDIA:9,JTLIND:9,JUBLCPL:10,JUBLFOOD:13,JUBLINGREA:9,JUBLPHARMA:9,JUNIPER:13,JUSTDIAL:9,JWL:9,JYOTHYLAB:9,JYOTICNC:6,JYOTISTRUC:9,KABRAEXTRU:15,KAJARIACER:9,KAKATCEM:8,KALAMANDIR:11,KALPATARU:9,KALYANI:9,KALYANIFRG:9,KALYANKJIL:9,KAMAHOLD:9,KAMATHOTEL:13,KAMDHENU:9,KAMOPAINTS:9,KANANIIND:9,KANCHI:9,KANORICHEM:7,KANPRPLA:9,KANSAINER:9,KAPSTON:9,KARMAENG:16,KARURVYSYA:4,KAUSHALYA:12,KAVDEFENCE:15,KAYA:9,KAYNES:15,KCP:9,KCPSUGIND:8,KDDL:9,KEC:9,KECL:16,KEEPLEARN:9,KEI:9,KELLTONTEC:15,KENNAMET:5,KERNEX:4,KESORAMIND:9,KEYFINSERV:4,KFINTECH:15,KHADIM:9,KHAICHEM:7,KHAITANLTD:9,KHANDSE:4,KICL:4,KILITCH:0,KIMS:0,KINGFA:15,KIOCL:9,KIRANVYPAR:9,KIRIINDUS:9,KIRLFER:9,KIRLOSBROS:9,KIRLOSENG:17,KIRLOSIND:9,KIRLPNU:9,KISSHT:15,KITEX:11,KKCL:9,KLBRENG-B:12,KMEW:12,KMSUGAR:8,KNAGRI:9,KNRCON:12,KOHINOOR:8,KOKUYOCMLN:9,KOLTEPATIL:14,KOPRAN:9,KOTAKBANK:4,KOTARISUG:7,KOTHARIPET:7,KOTHARIPRO:9,KOTIC:9,KOTYARK:9,KOVAI:0,KPEL:16,KPIGREEN:16,KPIL:12,KPITTECH:15,KPL:0,KPRMILL:9,KRBL:9,KREBSBIO:0,KRIDHANINF:12,KRISHANA:7,KRISHIVAL:8,KRISHNADEF:9,KRITI:9,KRITIKA:5,KRITINUT:9,KRN:9,KRONOX:9,KROSS:9,KRSNAA:0,KRYSTAL:9,KSB:9,KSCL:9,KSHINTL:9,KSHITIJPOL:9,KSL:5,KSOLVES:9,KSR:9,KTKBANK:4,KUANTUM:20,KWIL:9,LAGNAM:11,LAHOTIOV:9,LAL:11,LALPATHLAB:9,LAMBODHARA:11,LANCORHOL:9,LANDMARK:14,LANDSMILL:14,LAOPALA:9,LASA:9,LATENTVIEW:9,LATTEYS:9,LAURUSLABS:9,LAXMICOT:11,LAXMIDENTL:9,LAXMIINDIA:4,LCCINFOTEC:15,LEMERITE:9,LEMONTREE:13,LENSKART:9,LEXUS:9,LFIC:4,LGBBROSLTD:9,LGEINDIA:16,LGHL:9,LIBAS:10,LIBERTSHOE:9,LICHSGFIN:4,LICI:0,LIKHITHA:12,LINC:9,LINCOLN:0,LINDEINDIA:9,LLOYDSENGG:12,LLOYDSENT:9,LLOYDSME:5,LMW:9,LODHA:14,LOKESHMACH:1,LORDSCHLO:9,LOTUSDEV:14,LOTUSEYE:0,LOVABLE:9,LOYALTEX:11,LPDC:14,LT:1,LTF:4,LTFOODS:8,LTM:9,LTTS:15,LUMAXIND:9,LUMAXTECH:15,LUPIN:0,LUXIND:9,LXCHEM:7,LYKALABS:9,LYPSAGEMS:9,M&M:6,M&MFIN:4,MAANALU:5,MACPOWER:16,MADHAV:9,MADHAVIPL:12,MADHUCON:12,MADRASFERT:7,MAFATIND:9,MAGADSUGAR:8,MAGNUM:9,MAHABANK:4,MAHAPEXLTD:9,MAHASTEEL:5,MAHEPC:9,MAHESHWARI:3,MAHLIFE:0,MAHLOG:3,MAHSCOOTER:9,MAHSEAMLES:9,MAITHANALL:5,MAJESAUT:6,MALLCOM:9,MALUPAPER:20,MAMATA:1,MANAKALUCO:5,MANAKCOAT:5,MANAKSIA:9,MANAKSTEEL:5,MANALIPETC:7,MANAPPURAM:4,MANBA:4,MANCREDIT:4,MANGALAM:0,MANGLMCEM:12,MANINDS:9,MANINFRA:12,MANKIND:0,MANOMAY:9,MANORAMA:9,MANORG:7,MANUGRAPH:9,MANYAVAR:9,MAPMYINDIA:15,MARALOVER:9,MARATHON:14,MARICO:8,MARINE:16,MARKOLINES:15,MARKSANS:0,MARSONS:9,MARUTI:6,MASFIN:4,MASKINVEST:4,MASTEK:9,MASTERTR:9,MATRIMONY:9,MAWANASUG:8,MAXESTATES:14,MAXHEALTH:0,MAXIND:9,MAYURUNIQ:9,MAZDA:9,MAZDOCK:12,MBAPL:8,MBEL:12,MBLINFRA:12,MCCHRLS-B:9,MCL:5,MCLEODRUSS:9,MCLOUD:9,MCX:9,MEDANTA:0,MEDIASSIST:0,MEDICAMEQ:0,MEDICO:0,MEDPLUS:0,MEESHO:9,MEGASTAR:8,MEIL:16,MENNPIS:9,MENONBE:1,MERCANTILE:9,MERCURYEV:15,METROBRAND:9,METROGLOBL:9,METROPOLIS:0,MFML:9,MFSL:4,MGEL:9,MGL:17,MHLXMIRU:15,MHRIL:13,MICEL:16,MIDHANI:9,MIDWESTLTD:9,MINDACORP:9,MINDTECK:9,MIRCELECTR:16,MIRZAINT:9,MITCON:12,MITTAL:0,MKPL:9,MMFL:9,MMP:9,MMTC:9,MMWL:0,MOBIKWIK:9,MODINATUR:9,MODIRUBBER:9,MODIS:9,MODISONLTD:9,MODTHREAD:9,MOHITIND:15,MOIL:17,MOKSH:9,MOL:7,MOLDTECH:15,MOLDTKPAC:9,MONARCH:4,MONEYBOXX:4,MONTECARLO:9,MOREPENLAB:9,MOSCHIP:15,MOTHERSON:9,MOTILALOFS:4,MOTISONS:9,MOTOGENFIN:4,MPHASIS:9,MPSLTD:9,MRF:9,MRPL:7,MSPL:5,MSTCLTD:9,MSUMI:9,MTARTECH:15,MTEDUCARE:9,MTNL:2,MUFIN:4,MUFTI:9,MUKANDLTD:9,MUKKA:9,MUKTAARTS:9,MUNJALAU:6,MUNJALSHOW:9,MURUDCERA:9,MUTHOOTCAP:4,MUTHOOTFIN:4,MUTHOOTMF:4,MVGJL:9,MWL:9,NACLIND:9,NAGREEKCAP:4,NAGREEKEXP:9,NAHARCAP:4,NAHARINDUS:9,NAHARPOLY:18,NAHARSPING:11,NAM-INDIA:0,NARMADA:8,NATCAPSUQ:9,NATCOPHARM:0,NATHBIOGEN:0,NATIONALUM:5,NATIONSTD:9,NAUKRI:15,NAVA:9,NAVINFLUOR:7,NAVKARCORP:9,NAVKARURB:9,NAVNETEDUL:9,NAZARA:15,NBCC:12,NBIFIN:4,NCC:12,NCLIND:9,NDGL:9,NDL:9,NDLVENTURE:9,NDRAUTO:6,NDTV:2,NEAGI:8,NECCLTD:9,NECLIFE:0,NELCAST:9,NELCO:9,NEOGEN:7,NEPHROPLUS:0,NESCO:9,NESTLEIND:8,NETWEB:15,NETWORK18:18,NEULANDLAB:14,NEWGEN:15,NEXTMEDIA:0,NFL:7,NGIL:9,NGLFINE:7,NH:9,NHPC:9,NIACL:9,NIBE:9,NIBL:1,NIITLTD:15,NIITMTS:15,NILAINFRA:12,NILASPACES:9,NILE:9,NILKAMAL:9,NIMBSPROJ:12,NINSYS:9,NIPPOBATRY:9,NIRAJ:12,NIRAJISPAT:9,NIRLON:9,NITCO:9,NITINSPIN:11,NITIRAJ:12,NITTAGELA:9,NIVABUPA:0,NKIND:9,NLCINDIA:9,NMDC:5,NOCIL:9,NOIDATOLL:9,NORBTEAEXP:8,NORTHARC:4,NOVAAGRI:15,NOVARTIND:9,NPST:15,NRAIL:9,NRBBEARING:1,NRL:9,NSIL:4,NSLNISP:5,NTPC:16,NTPCGREEN:16,NUCLEUS:15,NURECA:9,NUVAMA:4,NUVOCO:9,NYKAA:13,OAL:9,OBCL:9,OBEROIRLTY:14,OCCLLTD:9,ODIGMA:9,OFSS:4,OIL:17,OILCOUNTUB:17,OLAELEC:16,OLECTRA:15,OMAXAUTO:6,OMAXE:9,OMFREIGHT:3,OMINFRAL:12,OMNI:15,OMPOWER:16,ONELIFECAP:0,ONEPOINT:9,ONESOURCE:0,ONGC:17,ONMOBILE:9,ONWARDTEC:15,OPTIEMUS:12,ORBTEXP:15,ORCHASP:9,ORCHPHARMA:0,ORICONENT:9,ORIENTALTL:9,ORIENTBELL:9,ORIENTCEM:12,ORIENTCER:15,ORIENTELEC:16,ORIENTHOT:13,ORIENTLTD:9,ORIENTPPR:20,ORIENTTECH:15,ORISSAMINE:14,ORKLAINDIA:9,ORTINGLOBE:9,OSIAHYPER:9,OSWALAGRO:8,OSWALGREEN:15,OSWALPUMPS:1,OSWALSEEDS:7,PACEDIGITK:9,PAGEIND:11,PAISALO:15,PAKKA:9,PALASHSECU:4,PALREDTEC:15,PANACEABIO:0,PANACHE:0,PANAMAPET:7,PANSARI:14,PAR:0,PARACABLES:2,PARADEEP:9,PARAGMILK:8,PARAS:15,PARASPETRO:17,PARKHOSPS:0,PARKHOTELS:13,PARSVNATH:14,PASHUPATI:11,PASUPTAC:9,PATANJALI:8,PATELENG:12,PATELRMART:9,PATINTLOG:3,PAUSHAKLTD:9,PAVNAIND:9,PAYTM:2,PCBL:7,PCJEWELLER:9,PDMJEPAPER:20,PDSL:9,PEARLPOLY:7,PENIND:9,PENINLAND:14,PERSISTENT:9,PETRONET:17,PFC:4,PFIZER:9,PFOCUS:9,PFS:4,PGEL:16,PGHH:0,PGHL:0,PGIL:9,PHOENIXLTD:9,PICCADIL:8,PIDILITIND:7,PIGL:16,PIIND:9,PILANIINVS:4,PILITA:0,PINELABS:9,PIONEEREMB:9,PIONRINV:4,PIRAMALFIN:4,PITTIENG:12,PIXTRANS:9,PKTEA:8,PLASTIBLEN:9,PLATIND:9,PLAZACABLE:5,PML:9,PNB:4,PNBGILTS:9,PNBHOUSING:4,PNC:2,PNCINFRA:12,PNGJL:9,PNGSREVA:9,POCL:7,PODDARMENT:9,POKARNA:9,POLICYBZR:15,POLYCAB:9,POLYMED:0,POLYPLEX:9,PONNIERODE:8,POONAWALLA:9,POWERGRID:16,POWERICA:16,POWERINDIA:16,POWERMECH:12,PPAP:6,PPL:9,PPLPHARMA:0,PRABHA:16,PRADPME:5,PRAENG:12,PRAJIND:9,PRAKASH:9,PRAKASHSTL:5,PRAVEG:9,PRAXIS:9,PRECAM:9,PRECOT:9,PRECWIRE:5,PREMCO:9,PREMEXPLN:9,PREMIER:9,PREMIERENE:9,PREMIERPOL:18,PRESTIGE:14,PRICOLLTD:9,PRIMESECU:4,PRIMO:7,PRINCEPIPE:9,PRITI:9,PRITIKAUTO:6,PRIVISCL:7,PROSTARM:15,PROTEAN:15,PROZONER:14,PRSMJOHNSN:9,PRUDENT:9,PRUDMOULI:8,PSB:4,PSPPROJECT:12,PTC:9,PTCIL:9,PTL:9,PUNJABCHEM:7,PURVA:9,PVP:9,PVRINOX:9,PVSL:9,PWL:9,PYRAMID:15,QPOWER:16,QUADFUTURE:9,QUESS:9,QUICKHEAL:15,QUINT:15,RACE:9,RACLGEAR:15,RADAAN:0,RADHIKAJWE:15,RADIANTCMS:9,RADICO:9,RADIOCITY:18,RAILTEL:9,RAIN:9,RAINBOW:0,RAJMET:5,RAJOOENG:12,RAJPALAYAM:9,RAJRATAN:5,RAJRILTD:9,RAJSREESUG:7,RAJTV:2,RALLIS:9,RAMANEWS:18,RAMAPHO:9,RAMASTEEL:5,RAMCOCEM:12,RAMCOIND:9,RAMCOSYS:9,RAMKY:12,RAMRAT:5,RANASUG:8,RANEHOLDIN:9,RATEGAIN:15,RATNAMANI:5,RATNAVEER:12,RAYMOND:11,RAYMONDLSL:0,RAYMONDREL:14,RBA:13,RBLBANK:4,RBZJEWEL:9,RCF:7,RCOM:2,RECLTD:9,REDINGTON:9,REDTAPE:9,REFEX:9,REGAAL:9,REGENCERAM:9,RELAXO:9,RELCHEMQ:7,RELIABLE:9,RELIANCE:17,RELIGARE:9,RELTD:16,REMSONSIND:9,RENUKA:8,REPCOHOME:4,REPL:9,REPRO:9,RESPONIND:9,RETAIL:9,RGL:9,RHETAN:9,RHIM:9,RHL:13,RICOAUTO:6,RIIL:12,RISHABH:9,RITCO:3,RITES:9,RKDL:8,RKEC:12,RKFORGE:9,RKSWAMY:9,RMC:6,RMDRIP:9,RML:9,RNBDENIMS:9,ROHLTD:13,ROLEXRINGS:9,ROLLT:9,ROML:17,ROSSARI:0,ROSSELLIND:9,ROSSTECH:15,ROTO:1,ROUTE:9,RPEL:9,RPGLIFE:0,RPOWER:16,RPPINFRA:12,RPPL:9,RPSGVENT:9,RPTECH:9,RRIL:9,RRKABEL:9,RSDFIN:4,RSL:9,RSSOFTWARE:15,RSWM:9,RSYSTEMS:9,RTNINDIA:9,RTNPOWER:16,RUBFILA:9,RUBICON:9,RUBYMILLS:9,RUCHINFRA:12,RUCHIRA:20,RUDRA:12,RUPA:9,RUSHIL:9,RUSTOMJEE:9,RVHL:9,RVNL:9,RVTH:1,S&SPOWER:6,SAATVIKGL:16,SABEVENTS:0,SADBHAV:12,SADBHIN:12,SADHNANIQ:7,SAFARI:9,SAGARDEEP:5,SAGCEM:12,SAGILITY:9,SAHLIBHFI:4,SAHYADRI:9,SAIL:5,SAILIFE:0,SAIPARENT:9,SAKAR:0,SAKHTISUG:8,SAKSOFT:9,SAKUMA:9,SALASAR:15,SALONA:11,SALSTEEL:5,SALZERELEC:16,SAMBHAAV:0,SAMBHV:5,SAMHI:13,SAMMAANCAP:4,SAMPANN:9,SANATHAN:11,SANDESH:9,SANDHAR:15,SANDUMA:5,SANGAMIND:9,SANGHVIMOV:9,SANGINITA:7,SANOFI:9,SANOFICONR:0,SANSERA:12,SANSTAR:9,SAPPHIRE:8,SAPPL:15,SARDAEN:16,SAREGAMA:18,SARLAPOLY:9,SARVESHWAR:8,SASKEN:15,SATIA:9,SATIN:4,SAURASHCEM:12,SAYAJIHOTL:13,SBC:9,SBCL:5,SBFC:4,SBGLP:9,SBICARD:9,SBILIFE:0,SBIN:4,SCANSTL:5,SCHAEFFLER:9,SCHAND:9,SCHNEIDER:12,SCI:3,SCILAL:4,SCODATUBES:5,SCPL:9,SDBL:8,SEAMECLTD:9,SECMARK:9,SECURKLOUD:15,SEDEMAC:9,SEIL:9,SEJALLTD:9,SELMC:9,SEMAC:12,SENCO:9,SENORES:0,SEPC:9,SERVOTECH:15,SESHAPAPER:20,SETCO:6,SETL:15,SEYAIND:9,SFL:9,SGFIN:9,SGIL:9,SGL:9,SGMART:9,SHADOWFAX:15,SHAH:9,SHAH-RE1:9,SHAHALLOYS:5,SHAILY:7,SHAKTIPUMP:1,SHALBY:9,SHALPAINTS:9,SHANKARA:12,SHANTI:9,SHANTIGEAR:6,SHANTIGOLD:9,SHARDACROP:7,SHARDAMOTR:6,SHARDUL:4,SHAREINDIA:4,SHBAJRG:9,SHEKHAWATI:9,SHEMAROO:18,SHILCTECH:15,SHILPAMED:0,SHINDL:9,SHIVALIK:9,SHIVAMAUTO:15,SHIVAMILLS:9,SHIVATEX:11,SHIVAUM:5,SHK:9,SHOPERSTOP:9,SHRADHA:14,SHREDIGCEM:12,SHREECEM:12,SHREEJISPG:3,SHREEPUSHK:7,SHREERAMA:15,SHREYANIND:9,SHRIKRISH:9,SHRINGARMS:9,SHRIPISTON:9,SHRIRAMFIN:4,SHRIRAMPPS:14,SHYAMCENT:9,SHYAMMETL:5,SHYAMTEL:2,SICAGEN:9,SICALLOG:3,SIEMENS:1,SIGACHI:9,SIGIND:9,SIGMA:9,SIGMAADV:9,SIGNATURE:9,SIGNPOST:9,SIKA:9,SIKKO:9,SIL:9,SILGO:9,SILINV:4,SILLYMONKS:18,SILVERTUC:15,SIMPLEXINF:12,SINCLAIR:13,SINDHUTRAD:9,SINGERIND:9,SINTERCOM:9,SIRCA:9,SIS:9,SIYSIL:11,SJS:9,SJVN:9,SKFINDIA:9,SKFINDUS:9,SKIPPER:9,SKMEGGPROD:9,SKYGOLD:9,SMARTLINK:9,SMARTWORKS:9,SMCGLOBAL:4,SMLMAH:9,SMLT:5,SMSPHARMA:0,SNOWMAN:3,SOBHA:9,SOFTTECH:15,SOLARA:0,SOLARINDS:9,SOLARWORLD:16,SOLEX:16,SOMANYCERA:9,SOMATEX:11,SOMICONVEY:9,SONACOMS:9,SONAL:9,SONAMLTD:9,SONATSOFTW:15,SOTL:15,SOUTHBANK:4,SOUTHWEST:9,SPAL:11,SPANDANA:4,SPARC:0,SPCENET:9,SPECIALITY:13,SPECTRUM:16,SPENCERS:9,SPIC:7,SPLIL:9,SPLPETRO:7,SPMLINFRA:12,SPORTKING:9,SRD:7,SREEL:9,SRF:7,SRGHFL:4,SRHHYPOLTD:9,SRM:6,SRTL:9,SSDL:9,SSWL:5,STALLION:7,STANLEY:0,STAR:0,STARCEMENT:12,STARHEALTH:0,STARPAPER:20,STARTECK:4,STCINDIA:9,STEELCAS:5,STEELCITY:4,STEELXIND:5,STEL:9,STERTOOLS:1,STLNETWORK:2,STLTECH:15,STOVEKRAFT:9,STUDDS:9,STYL:15,STYLAMIND:9,STYLEBAAZA:9,STYRENIX:6,SUBEXLTD:9,SUBROS:9,SUDARCOLOR:9,SUDARSCHEM:7,SUDEEPPHRM:0,SUKHJITS:15,SULA:9,SUMEETINDS:9,SUMICHEM:7,SUMIT:15,SUMMITSEC:4,SUNCLAY:9,SUNDARAM:9,SUNDARMFIN:4,SUNDRMBRAK:9,SUNDRMFAST:9,SUNDROP:9,SUNFLAG:5,SUNPHARMA:0,SUNTECK:14,SUNTV:18,SUPERHOUSE:9,SUPERSPIN:11,SUPRAJIT:15,SUPREME:0,SUPREMEIND:9,SUPREMEINF:12,SUPRIYA:0,SURAJEST:14,SURAJLTD:9,SURAKSHA:0,SURANASOL:9,SURANAT&P:16,SURYALA:11,SURYALAXMI:11,SURYAROSNI:9,SURYODAY:4,SUTLEJTEX:11,SUVEN:0,SUVIDHAA:15,SUYOG:2,SUZLON:16,SVLL:3,SVPGLOB:11,SWANCORP:9,SWANDEF:9,SWARAJENG:9,SWELECTES:16,SWIGGY:9,SWSOLAR:16,SYMPHONY:9,SYNCOMF:9,SYNGENE:9,SYRMA:15,SYSTMTXC:9,TAALTECH:15,TAINWALCHM:7,TAJGVK:13,TAKE:9,TALBROAUTO:6,TAMBOLIIN:9,TANLA:9,TARACHAND:12,TARAPUR:9,TARC:9,TARIL:9,TARMAT:9,TARSONS:9,TASTYBITE:9,TATACAP:4,TATACHEM:7,TATACOMM:2,TATACONSUM:8,TATAELXSI:9,TATAINVEST:4,TATAPOWER:16,TATASTEEL:5,TATATECH:15,TATVA:0,TBOTEK:9,TBZ:9,TCC:9,TCI:3,TCIEXP:3,TCIFINANCE:4,TCPLPACK:9,TCS:15,TDPOWERSYS:16,TEAMGTY:8,TEAMLEASE:8,TECHM:15,TECHNOE:15,TECHNVISN:15,TECILCHEM:7,TEGA:9,TEJASNET:2,TEMBO:9,TENNIND:9,TERASOFT:15,TEXINFRA:12,TEXMOPIPES:9,TEXRAIL:12,TFCILTD:4,TFL:4,TGBHOTELS:13,THACKER:9,THAKDEV:14,THANGAMAYL:9,THEINVEST:4,THEJO:12,THELEELA:13,THEMISMED:0,THERMAX:9,THOMASCOOK:9,THOMASCOTT:9,THYROCARE:15,TI:9,TICL:12,TIGERLOGS:3,TIIL:15,TIINDIA:4,TIJARIA:9,TIL:9,TIMETECHNO:15,TIMEX:9,TIMKEN:9,TINNARUBR:12,TIPSFILMS:18,TIPSMUSIC:9,TIRUMALCHM:7,TIRUPATIFL:9,TITAGARH:9,TITAN:10,TMB:4,TMCV:6,TMPV:6,TNPETRO:17,TNPL:18,TNTELE:2,TOKYOPLAST:9,TOLINS:6,TORNTPHARM:0,TORNTPOWER:16,TOTAL:3,TOUCHWOOD:18,TPHQ:8,TPLPLASTEH:15,TRACXN:15,TRANSPEK:9,TRANSRAILL:9,TRANSWORLD:3,TRAVELFOOD:8,TREEHOUSE:9,TREJHARA:9,TREL:14,TRENT:9,TRF:9,TRIDENT:11,TRIGYN:15,TRITURBINE:9,TRIVENI:12,TRU:4,TRUALT:0,TSFINV:4,TTKHLTCARE:0,TTKPRESTIG:9,TTL:9,TTML:2,TVSELECT:16,TVSHLTD:18,TVSMOTOR:6,TVSSCS:18,TVSSRICHAK:18,TVTODAY:18,TVVISION:18,UBL:8,UCAL:9,UCOBANK:4,UDS:9,UEL:16,UFBL:8,UFLEX:9,UFO:9,UGARSUGAR:8,UGROCAP:4,UJJIVANSFB:4,ULTRACEMCO:15,ULTRAMAR:9,UMAEXPORTS:9,UMESLTD:9,UMIYA-MRO:12,UNICHEMLAB:7,UNIDT:1,UNIECOM:9,UNIENTER:9,UNIINFO:15,UNIMECH:9,UNIONBANK:4,UNIPARTS:9,UNITDSPR:9,UNITECH:15,UNITEDPOLY:9,UNITEDTEA:8,UNIVASTU:9,UNIVCABLES:9,UNIVPHOTO:9,UNOMINDA:9,UPL:9,URAVIDEF:15,URBANCO:9,URJA:9,USHAMART:9,USK:12,UTIAMC:4,UTKARSHBNK:4,UTLSOLAR:16,UTTAMSUGAR:8,UYFINCORP:9,V2RETAIL:9,VADILALIND:9,VAIBHAVGBL:9,VAISHALI:0,VAKRANGEE:9,VALIANTLAB:9,VALIANTORG:7,VARDHACRLC:9,VARDMNPOLY:9,VARROC:12,VASCONEQ:12,VASWANI:9,VBL:9,VCL:9,VEDL:5,VEEDOL:9,VELJAN:9,VENKEYS:9,VENTIVE:0,VENUSPIPES:5,VENUSREM:0,VERANDA:9,VERTOZ:9,VESUVIUS:9,VETO:6,VGL:9,VGUARD:9,VHL:9,VHLTD:13,VIDHIING:8,VIDYAWIRES:5,VIJAYA:0,VIJIFIN:4,VIKASECO:15,VIKASLIFE:0,VIKRAMSOLR:9,VIKRAN:12,VIMTALABS:9,VINATIORGA:7,VINCOFE:8,VINDHYATEL:2,VINEETLAB:9,VINNY:9,VINYLINDIA:7,VIPCLOTHNG:9,VIPIND:9,VIPULLTD:9,VIRINCHI:9,VISACHROME:9,VISAKAIND:9,VISHNU:7,VISHWARAJ:8,VITAL:15,VIVIANA:15,VIVIDHA:9,VIVIMEDLAB:0,VIYASH:9,VLEGOV:15,VLSFINANCE:4,VMART:9,VMM:9,VMSTMT:9,VOLTAMP:9,VOLTAS:9,VPRPL:9,VRAJ:5,VRLLOG:3,VSSL:5,VSTIND:9,VSTL:5,VSTTILLERS:6,VTL:11,WAAREEENER:9,WAAREEINDO:9,WAAREERTL:15,WABAG:15,WAKEFIT:15,WALCHANNAG:9,WANBURY:9,WCIL:9,WEALTH:4,WEBELSOLAR:16,WEIZMANIND:9,WEL:16,WELCORP:9,WELENT:9,WELINV:4,WELSPLSOL:9,WELSPUNLIV:11,WENDT:9,WESTLIFE:0,WEWIN:9,WEWORK:9,WHEELS:6,WHIRLPOOL:10,WILLAMAGOR:9,WINDLAS:0,WINDMACHIN:1,WIPL:20,WIPRO:15,WOCKPHARMA:9,WONDERLA:9,WORTHPERI:9,WPIL:9,WSI:9,WSTCSTPAPR:20,XCHANGING:9,XELPMOC:15,XPROINDIA:9,XTGLOBAL:15,YASHO:9,YATHARTH:0,YATRA:9,YESBANK:4,YUKEN:9,ZAGGLE:9,ZEEL:18,ZEELEARN:9,ZEEMEDIA:0,ZENITHEXPO:9,ZENITHSTL:5,ZENSARTECH:15,ZENTEC:15,ZFCVINDIA:9,ZFSTEERING:6,ZIMLAB:9,ZODIAC:16,ZODIACLOTH:9,ZOTA:0,ZSARACOM:9,ZUARI:7,ZUARIIND:9,ZYDUSLIFE:0,ZYDUSWELL:9
-`.replace(/\n/g, '');
+// NIFTY 50 / 100 / 200 subsets (by index in ALL_STOCKS)
+const NIFTY50_SYMS  = ALL_STOCKS.slice(0,50).map(s=>s[0]);
+const NIFTY100_SYMS = ALL_STOCKS.slice(0,100).map(s=>s[0]);
+const NIFTY200_SYMS = ALL_STOCKS.slice(0,200).map(s=>s[0]);
+const LIQUID_SYMS   = ALL_STOCKS.map(s=>s[0]);
+const SECTOR_MAP    = Object.fromEntries(ALL_STOCKS.map(s=>[s[0],s[1]]));
 
-const STOCKS_REGISTRY = COMPRESSED_DATA.split(',').filter(x => x).map(s => {
-  const parts = s.split(':');
-  return [parts[0], SECTOR_LIST[parseInt(parts[1])]];
+const SECTORS = ['BANK','IT','PHARMA','AUTO','METAL','ENERGY','FMCG','INFRA','REALTY','MEDIA','CHEM','TEXTILE'];
+const SECTOR_COLORS = {
+  BANK:'#3b82f6',IT:'#06b6d4',PHARMA:'#22c55e',AUTO:'#f59e0b',METAL:'#94a3b8',
+  ENERGY:'#f97316',FMCG:'#ec4899',INFRA:'#84cc16',REALTY:'#a855f7',
+  MEDIA:'#14b8a6',CHEM:'#eab308',TEXTILE:'#fb923c'
+};
+
+// Build sector chips
+const chipRow = document.getElementById('sectorChips');
+const allChip = document.createElement('span');
+allChip.className='schip active'; allChip.textContent='All';
+allChip.onclick=()=>{ document.getElementById('sectorFilter').value='all'; updateCount(); chipRow.querySelectorAll('.schip').forEach(c=>c.classList.remove('active')); allChip.classList.add('active'); };
+chipRow.appendChild(allChip);
+SECTORS.forEach(s=>{
+  const chip=document.createElement('span');
+  chip.className='schip'; chip.textContent=s;
+  chip.style.setProperty('--sc',SECTOR_COLORS[s]||'#5a6480');
+  chip.onclick=()=>{
+    document.getElementById('sectorFilter').value=s;
+    updateCount();
+    chipRow.querySelectorAll('.schip').forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');
+  };
+  chipRow.appendChild(chip);
 });
 
-let globalResults = [], scanning = false, activeSort = null, sortAsc = true;
-let selectedSectorFilter = null; // Master drilldown tracker state variable
-
-function killScan() { scanning = false; }
-
-// Technical Indicator Mathematics
-function calcWMA(d, p) {
-  let r = Array(d.length).fill(null); const den = p * (p + 1) / 2;
-  for (let i = p - 1; i < d.length; i++) {
-    let s = 0; for (let j = 0; j < p; j++) s += d[i - (p - 1 - j)] * (j + 1);
-    r[i] = s / den;
-  }
-  return r;
-}
-
-function calcRSI(d, p = 14) {
-  let r = Array(d.length).fill(null); if (d.length < p + 1) return r;
-  let g = 0, l = 0; for (let i = 1; i <= p; i++) { const df = d[i] - d[i - 1]; if (df > 0) g += df; else l -= df; }
-  g /= p; l /= p; r[p] = 100 - 100 / (1 + g / (l || .0001));
-  for (let i = p + 1; i < d.length; i++) {
-    const df = d[i] - d[i - 1]; g = (g * (p - 1) + (df > 0 ? df : 0)) / p; l = (l * (p - 1) + (df < 0 ? -df : 0)) / p;
-    r[i] = 100 - 100 / (1 + g / (l || .0001));
-  }
-  return r;
-}
-
-async function getEodData(sym, days) {
-  try {
-    const to = new Date(), from = new Date(); from.setDate(from.getDate() - days);
-    const fmt = d => d.toISOString().split('T')[0].replace(/-/g, '');
-    const url = `https://stooq.com/q/d/l/?s=${sym.toLowerCase()}.in&d1=${fmt(from)}&d2=${fmt(to)}&i=d`;
-    const res = await fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`, { signal: AbortSignal.timeout(9000) });
-    const text = await res.text();
-    if (text.includes('No data') || text.trim().length < 60) throw new Error();
-    const lines = text.trim().split('\n');
-    let output = [];
-    for (let i = 1; i < lines.length; i++) {
-      const c = lines[i].split(','); if (c.length < 6) continue;
-      output.push({ o: +c[1], h: +c[2], l: +c[3], c: +c[4], v: +c[5] });
-    }
-    return output;
-  } catch (e) {
-    const to = Math.floor(Date.now() / 1000), from = to - days * 86400;
-    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${sym}.NS?interval=1d&period1=${from}&period2=${to}`;
-    const res = await fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`, { signal: AbortSignal.timeout(9000) });
-    const json = await res.json();
-    const q = json?.chart?.result?.[0]; if (!q) return null;
-    const ts = q.timestamp, ohlcv = q.indicators.quote[0];
-    let output = [];
-    for (let i = 0; i < ts.length; i++) {
-      if (ohlcv.close[i] == null) continue;
-      output.push({ o: ohlcv.open[i], h: ohlcv.high[i], l: ohlcv.low[i], c: ohlcv.close[i], v: ohlcv.volume[i] });
-    }
-    return output;
-  }
-}
-
-async function executeScan() {
-  if (scanning) return;
-  scanning = true;
-  globalResults = [];
-  
+function getFilteredSyms() {
   const uni = document.getElementById('universe').value;
-  const days = +document.getElementById('period').value;
-  const conc = +document.getElementById('concurrency').value;
-  
-  let targetedList = STOCKS_REGISTRY;
-  if (uni === 'nifty50') targetedList = STOCKS_REGISTRY.slice(0, 50);
-  if (uni === 'nifty500') targetedList = STOCKS_REGISTRY.slice(0, 500);
-  
-  document.getElementById('runBtn').disabled = true;
-  document.getElementById('stopBtn').style.display = 'inline-flex';
-  const card = document.getElementById('progressCard'); card.style.display = 'block';
-  document.getElementById('progGrid').innerHTML = '';
-  
-  let done = 0;
-  for (let i = 0; i < targetedList.length; i += conc) {
-    if (!scanning) break;
-    const batch = targetedList.slice(i, i + conc);
-    await Promise.all(batch.map(async ([sym, sec]) => {
-      if (!scanning) return;
-      try {
-        const rows = await getEodData(sym, days);
-        if (!rows || rows.length < 40) throw new Error();
-        
-        const last = rows.length - 1;
-        const closes = rows.map(r => r.c);
-        const highs = rows.map(r => r.h);
-        
-        const close = rows[last].c;
-        const high52w = Math.max(...highs.slice(Math.max(0, last - 250)));
-        const dist52w = ((high52w - close) / high52w) * 100;
-        
-        const wma42 = calcWMA(closes, 42)[last] || close;
-        const wma84 = calcWMA(closes, 84)[last] || close;
-        const wma30 = calcWMA(closes, 30)[last] || close;
-        const rsi = calcRSI(closes, 14)[last] || 50;
-        
-        const vol20 = rows.slice(Math.max(0, last - 20)).reduce((a, b) => a + b.v, 0) / 20;
-        const volRat = vol20 > 0 ? rows[last].v / vol20 : 1;
-        
-        let pass = 0, req = 0;
-        if (document.getElementById('c1').checked) { req++; if (close > wma42) pass++; }
-        if (document.getElementById('c2').checked) { req++; if (wma42 > wma84) pass++; }
-        if (document.getElementById('c3').checked) { req++; if (close > wma30) pass++; }
-        if (document.getElementById('c4').checked) { req++; if (close >= +document.getElementById('priceMin').value && close <= +document.getElementById('priceMax').value) pass++; }
-        if (document.getElementById('c5').checked) { req++; if (rows[last].v >= +document.getElementById('minVol').value) pass++; }
-        
-        let sig = 'FAIL';
-        if (pass === req) sig = 'BUY';
-        else if (pass >= req - 1) sig = 'WATCH';
-        
-        globalResults.push({ sym, sector: sec, close, high52w, dist52w, signal: sig, rsi, volRat, valid: true });
-        logProgress(sym, true);
-      } catch (e) {
-        logProgress(sym, false);
-      } finally {
-        done++;
-        document.getElementById('progFill').style.width = (done / targetedList.length) * 100 + '%';
-        document.getElementById('progNums').textContent = `${done} / ${targetedList.length}`;
+  const sec = document.getElementById('sectorFilter').value;
+  let base;
+  if (uni==='nifty50') base=NIFTY50_SYMS;
+  else if (uni==='nifty100') base=NIFTY100_SYMS;
+  else if (uni==='nifty200') base=NIFTY200_SYMS;
+  else base=LIQUID_SYMS;
+  if (sec!=='all') base=base.filter(s=>SECTOR_MAP[s]===sec);
+  return [...new Set(base)]; // dedupe
+}
+
+function updateCount() {
+  const syms=getFilteredSyms();
+  document.getElementById('stockCount').textContent=`${syms.length} stocks · 2L+ daily vol`;
+}
+
+// ═══════════════════════════════════════════
+// MATH
+// ═══════════════════════════════════════════
+function calcWMA(data,period){
+  const res=Array(data.length).fill(null);
+  const denom=period*(period+1)/2;
+  for(let i=period-1;i<data.length;i++){
+    let s=0; for(let j=0;j<period;j++) s+=data[i-(period-1-j)]*(j+1);
+    res[i]=s/denom;
+  }
+  return res;
+}
+function calcEMA(data,period){
+  const res=Array(data.length).fill(null);
+  const k=2/(period+1); let sum=0,cnt=0;
+  for(let i=0;i<data.length;i++){
+    if(data[i]==null) continue;
+    if(cnt<period){sum+=data[i];cnt++;if(cnt===period)res[i]=sum/period;}
+    else{res[i]=data[i]*k+res[i-1]*(1-k);}
+  }
+  return res;
+}
+function calcRSI(data,p=14){
+  const res=Array(data.length).fill(null);
+  if(data.length<p+1)return res;
+  let ag=0,al=0;
+  for(let i=1;i<=p;i++){const d=data[i]-data[i-1];if(d>0)ag+=d;else al-=d;}
+  ag/=p;al/=p;
+  res[p]=100-100/(1+ag/(al||.0001));
+  for(let i=p+1;i<data.length;i++){
+    const d=data[i]-data[i-1];
+    ag=(ag*(p-1)+(d>0?d:0))/p; al=(al*(p-1)+(d<0?-d:0))/p;
+    res[i]=100-100/(1+ag/(al||.0001));
+  }
+  return res;
+}
+function calcSMA(data,p){
+  const res=Array(data.length).fill(null);
+  for(let i=p-1;i<data.length;i++){let s=0;for(let j=i-p+1;j<=i;j++)s+=data[j];res[i]=s/p;}
+  return res;
+}
+
+// ═══════════════════════════════════════════
+// FETCH
+// ═══════════════════════════════════════════
+async function fetchStooq(sym,days){
+  const to=new Date(), from=new Date(); from.setDate(from.getDate()-days);
+  const fmt=d=>d.toISOString().split('T')[0].replace(/-/g,'');
+  const url=`https://stooq.com/q/d/l/?s=${sym.toLowerCase()}.in&d1=${fmt(from)}&d2=${fmt(to)}&i=d`;
+  const proxy=`https://corsproxy.io/?${encodeURIComponent(url)}`;
+  const res=await fetch(proxy,{signal:AbortSignal.timeout(12000)});
+  if(!res.ok) throw new Error('HTTP '+res.status);
+  const text=await res.text();
+  if(text.includes('No data')||text.trim().length<50) throw new Error('No data');
+  return parseStooqCSV(text);
+}
+async function fetchYahoo(sym,days){
+  const to=Math.floor(Date.now()/1000), from=to-days*86400;
+  const url=`https://query1.finance.yahoo.com/v8/finance/chart/${sym}.NS?interval=1d&period1=${from}&period2=${to}`;
+  const proxy=`https://corsproxy.io/?${encodeURIComponent(url)}`;
+  const res=await fetch(proxy,{signal:AbortSignal.timeout(12000)});
+  if(!res.ok) throw new Error('HTTP '+res.status);
+  const json=await res.json();
+  const q=json?.chart?.result?.[0];
+  if(!q) throw new Error('No data');
+  const ts=q.timestamp, ohlcv=q.indicators.quote[0];
+  const rows=[];
+  for(let i=0;i<ts.length;i++){
+    const o=ohlcv.open[i],h=ohlcv.high[i],l=ohlcv.low[i],c=ohlcv.close[i],v=ohlcv.volume[i];
+    if([o,h,l,c,v].some(x=>x==null||isNaN(x))) continue;
+    rows.push({o,h,l,c,v});
+  }
+  if(rows.length<10) throw new Error('Insufficient data');
+  return rows;
+}
+function parseStooqCSV(text){
+  const lines=text.trim().split('\n');
+  const start=isNaN(+lines[0].split(',')[1])?1:0;
+  const rows=[];
+  for(let i=start;i<lines.length;i++){
+    const c=lines[i].split(',');
+    if(c.length<6)continue;
+    const o=+c[1],h=+c[2],l=+c[3],cl=+c[4],v=+c[5];
+    if([o,h,l,cl,v].some(isNaN)||cl===0)continue;
+    rows.push({o,h,l,c:cl,v});
+  }
+  return rows.length>=10?rows:null;
+}
+async function fetchStock(sym,days){
+  try{const r=await fetchStooq(sym,days);if(r&&r.length>=10)return{rows:r,source:'stooq'};}catch(e){}
+  try{const r=await fetchYahoo(sym,days);if(r&&r.length>=10)return{rows:r,source:'yahoo'};}catch(e){}
+  return null;
+}
+
+// ═══════════════════════════════════════════
+// SCREEN
+// ═══════════════════════════════════════════
+function screenStock(sym,rows,source){
+  const closes=rows.map(r=>r.c), vols=rows.map(r=>r.v), last=rows.length-1;
+  const wma42=calcWMA(closes,42),wma84=calcWMA(closes,84),wma30=calcWMA(closes,30),wma60=calcWMA(closes,60);
+  const wma12d=calcWMA(closes,12),wma20d=calcWMA(closes,20);
+  const ema20=calcEMA(closes,20),volSMA=calcSMA(vols,20),rsiArr=calcRSI(closes,14);
+  const close=closes[last],prev=closes[last-1]||close,chg=((close-prev)/prev)*100;
+  const v42=wma42[last],v84=wma84[last],v30=wma30[last],v60=wma60[last];
+  const v12lag4=wma12d[Math.max(0,last-4)],v20lag2=wma20d[Math.max(0,last-2)];
+  const e20=ema20[last],rsi=rsiArr[last],vSMA=volSMA[last];
+  if(!v42||!v84||!v30||!v60||!v12lag4||!v20lag2||!e20)return null;
+  const weeklyVol=vols.slice(Math.max(0,last-4),last+1).reduce((a,b)=>a+b,0);
+  const volRat=vSMA>0?vols[last]/vSMA:0;
+  const ema20dist=Math.abs((close-e20)/e20)*100,aboveEma20=close>e20;
+  const priceMin=+document.getElementById('priceMin').value;
+  const priceMax=+document.getElementById('priceMax').value;
+  const minVol=+document.getElementById('minVol').value;
+  const maxEd=+document.getElementById('ema20dist').value;
+  const mustAbove=document.getElementById('c9above').checked;
+  const rsiMin=+document.getElementById('rsiMin').value,rsiMax=+document.getElementById('rsiMax').value;
+  const conds={
+    c1:close>v42+1,c2:v42>v84+2,c3:close>v30+2,c4:v30>v60+2,
+    c5:close>v12lag4+2,c6:close>v20lag2+2,
+    c7:close>priceMin&&close<=priceMax,c8:weeklyVol>minVol,
+    c9:ema20dist<=maxEd&&(mustAbove?aboveEma20:true),
+    c10:rsi!==null&&rsi>=rsiMin&&rsi<=rsiMax,
+  };
+  const keys=['c1','c2','c3','c4','c5','c6','c7','c8','c9','c10'];
+  let passed=0,required=0; const results={};
+  for(const k of keys){const el=document.getElementById(k);if(el&&el.checked){required++;results[k]=conds[k];if(conds[k])passed++;}}
+  const allPassed=required>0&&passed===required;
+  const wmaAligned=conds.c1&&conds.c2&&conds.c3&&conds.c4;
+  let signal='FAIL';
+  if(allPassed)signal='BUY';
+  else if(wmaAligned&&passed>=required-2)signal='WATCH';
+  return{sym,sector:SECTOR_MAP[sym]||'—',close,chg,signal,source,
+    ema20:e20,ema20dist,aboveEma20,wma42:v42,wma84:v84,wma30:v30,wma60:v60,
+    volRat,weeklyVol,rsi,conds,results,passed,required,allPassed,wmaAligned,passCount:passed};
+}
+
+// ═══════════════════════════════════════════
+// RUN ALL
+// ═══════════════════════════════════════════
+let screenResults=[], sortCol=null, sortDir=1, scanning=false;
+
+async function runAll(){
+  const syms=getFilteredSyms();
+  if(!syms.length){alert('No stocks in selected universe/sector.');return;}
+  const days=+document.getElementById('period').value;
+  const concurrency=+document.getElementById('concurrency').value;
+
+  scanning=true;
+  screenResults=[];
+  document.getElementById('runBtn').disabled=true;
+  document.getElementById('runBtn').textContent='⏳ Scanning...';
+  document.getElementById('stopBtn').style.display='inline-flex';
+  document.getElementById('progressCard').classList.add('show');
+  document.getElementById('progGrid').innerHTML='';
+  document.getElementById('progFill').style.width='0%';
+  document.getElementById('progNums').textContent=`0 / ${syms.length}`;
+
+  let done=0;
+  const addLog=(sym,ok,src)=>{
+    done++;
+    const pct=Math.round((done/syms.length)*100);
+    document.getElementById('progFill').style.width=pct+'%';
+    document.getElementById('progNums').textContent=`${done} / ${syms.length}`;
+    const el=document.createElement('div');
+    el.className='prog-item '+(ok?'prog-ok':'prog-err');
+    el.textContent=(ok?'✓':'✗')+' '+sym+(src?' ·'+src:'');
+    document.getElementById('progGrid').appendChild(el);
+    document.getElementById('progGrid').scrollTop=99999;
+  };
+
+  // Process in batches of `concurrency`
+  for(let i=0;i<syms.length;i+=concurrency){
+    if(!scanning) break;
+    const batch=syms.slice(i,i+concurrency);
+    await Promise.all(batch.map(async sym=>{
+      if(!scanning)return;
+      try{
+        const res=await fetchStock(sym,days);
+        if(!res) throw new Error('no data');
+        const r=screenStock(sym,res.rows,res.source);
+        if(!r) throw new Error('insufficient data');
+        screenResults.push(r);
+        addLog(sym,true,res.source);
+      }catch(e){
+        screenResults.push({sym,sector:SECTOR_MAP[sym]||'—',close:0,chg:0,signal:'ERR',source:'error',
+          ema20:0,ema20dist:0,aboveEma20:false,wma42:0,wma84:0,wma30:0,wma60:0,
+          volRat:0,weeklyVol:0,rsi:null,conds:{},results:{},passed:0,required:0,
+          allPassed:false,wmaAligned:false,passCount:0});
+        addLog(sym,false,'');
       }
     }));
-    refreshVisuals();
-    await new Promise(r => setTimeout(r, 150));
+    renderResults();
+    if(i+concurrency<syms.length) await sleep(400);
   }
-  
-  document.getElementById('runBtn').disabled = false;
-  document.getElementById('stopBtn').style.display = 'none';
-  scanning = false;
+
+  document.getElementById('runBtn').disabled=false;
+  document.getElementById('runBtn').textContent='⚡ Screen All Stocks';
+  document.getElementById('stopBtn').style.display='none';
+  scanning=false;
+  renderResults();
 }
 
-function logProgress(sym, ok) {
-  const el = document.createElement('div');
-  el.className = 'prog-item ' + (ok ? 'prog-ok' : 'prog-err');
-  el.textContent = (ok ? '✓ ' : '✗ ') + sym;
-  document.getElementById('progGrid').appendChild(el);
-  document.getElementById('progGrid').scrollTop = 99999;
+function stopScan(){
+  scanning=false;
+  document.getElementById('runBtn').disabled=false;
+  document.getElementById('runBtn').textContent='⚡ Screen All Stocks';
+  document.getElementById('stopBtn').style.display='none';
 }
 
-// Master Interaction Trigger Function
-function filterBySector(sectorName) {
-  if (selectedSectorFilter === sectorName) {
-    selectedSectorFilter = null; // Toggle off if clicked twice
-  } else {
-    selectedSectorFilter = sectorName;
-  }
-  refreshVisuals();
-}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
 
-function clearSectorFilter() {
-  selectedSectorFilter = null;
-  refreshVisuals();
-}
+// ═══════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════
+function renderResults(){applyFilter();updateStats();}
 
-function generateSectorRowHtml(sec, pct, isLeader) {
-  const isSelected = selectedSectorFilter === sec ? 'selected' : '';
-  const fillColor = isLeader ? 'var(--green)' : '#cb5754';
-  return `
-    <div class="breadth-row ${isSelected}" onclick="filterBySector('${sec}')">
-      <div class="breadth-label" title="${sec}">${sec}</div>
-      <div class="breadth-bar-bg">
-        <div class="breadth-bar-fill" style="width: ${pct}%; background: ${fillColor}; color: ${pct > 15 ? '#000' : '#fff'}">${pct}%</div>
-      </div>
-    </div>
-  `;
-}
-
-function refreshVisuals() {
-  const thresh = +document.getElementById('highThreshold').value;
-  document.getElementById('lblThreshold').textContent = thresh;
-  
-  // 1. Core Analytics Compilation Process
-  let bCounts = {};
-  SECTOR_LIST.forEach(s => bCounts[s] = { total: 0, near: 0 });
-  
-  globalResults.forEach(r => {
-    if (bCounts[r.sector]) {
-      bCounts[r.sector].total++;
-      if (r.dist52w <= thresh) bCounts[r.sector].near++;
-    }
+function applyFilter(){
+  const sf=document.getElementById('sigFilter').value;
+  const sec=document.getElementById('sectorResultFilter').value;
+  let data=screenResults.filter(r=>r.signal!=='ERR');
+  if(sf!=='all') data=data.filter(r=>r.signal===sf);
+  if(sec!=='all') data=data.filter(r=>r.sector===sec);
+  // Sort BUY first by default
+  data.sort((a,b)=>{
+    const order={BUY:0,WATCH:1,FAIL:2};
+    if(sortCol) return 0;
+    return (order[a.signal]||2)-(order[b.signal]||2);
   });
-  
-  // Calculate percentage strength maps
-  const analyzedSectors = SECTOR_LIST.map(sec => {
-    const data = bCounts[sec];
-    const pct = data.total > 0 ? Math.round((data.near / data.total) * 100) : 0;
-    return { name: sec, pct: pct, total: data.total };
-  });
+  renderTable(data);
+}
 
-  // Sort sectors by percentage strength descending
-  analyzedSectors.sort((a, b) => b.pct - a.pct);
-  
-  // Split into Leading (Top 11) and Lagging (Bottom 10)
-  const leaders = analyzedSectors.slice(0, 11);
-  const laggers = analyzedSectors.slice(11);
-
-  // Render to individual leaderboard columns
-  document.getElementById('leaderBars').innerHTML = leaders.map(s => generateSectorRowHtml(s.name, s.pct, true)).join('');
-  document.getElementById('laggerBars').innerHTML = laggers.map(s => generateSectorRowHtml(s.name, s.pct, false)).join('');
-
-  // 2. Active Drilling Filter Controls
-  const labelEl = document.getElementById('activeFilterLabel');
-  const clearBtn = document.getElementById('clearFilterBtn');
-  if (selectedSectorFilter) {
-    labelEl.innerHTML = ` <span class="active-filter-pill">Isolated: ${selectedSectorFilter}</span>`;
-    clearBtn.style.display = 'inline-block';
-  } else {
-    labelEl.innerHTML = '';
-    clearBtn.style.display = 'none';
-  }
-
-  // 3. Render Data Table rows
-  const sigFilter = document.getElementById('sigFilter').value;
-  let displayRows = globalResults.filter(r => {
-    const matchesSignal = sigFilter === 'all' || r.signal === sigFilter;
-    const matchesSector = !selectedSectorFilter || r.sector === selectedSectorFilter;
-    return matchesSignal && matchesSector;
-  });
-  
-  if (activeSort) {
-    displayRows.sort((a, b) => {
-      let valA = a[activeSort], valB = b[activeSort];
-      if (typeof valA === 'string') return sortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
-      return sortAsc ? valA - valB : valB - valA;
-    });
-  }
-  
-  const tbody = document.getElementById('resultBody');
-  if (!displayRows.length) {
-    tbody.innerHTML = `<tr><td colspan="8"><div class="empty">No tickers match requested constraints inside this tracking slot yet.</div></td></tr>`;
+function renderTable(data){
+  const body=document.getElementById('resultBody');
+  if(!data.length){
+    body.innerHTML=`<tr><td colspan="14"><div class="empty"><p>No results yet or no matches for current filter.</p></div></td></tr>`;
     return;
   }
-  
-  tbody.innerHTML = displayRows.map(r => `
-    <tr>
-      <td class="sym-cell">${r.sym}</td>
-      <td><span class="sector-tag">${r.sector}</span></td>
-      <td style="color:#fff; font-weight:600;">₹${r.close.toFixed(2)}</td>
-      <td class="${r.dist52w <= thresh ? 'pos' : ''}" style="font-weight:700;">${r.dist52w.toFixed(2)}%</td>
-      <td style="color:var(--muted);">₹${r.high52w.toFixed(2)}</td>
-      <td><span class="pill ${r.signal === 'BUY' ? 'pill-buy' : r.signal === 'WATCH' ? 'pill-watch' : 'pill-fail'}">${r.signal}</span></td>
-      <td style="color:${r.rsi > 65 ? 'var(--green)' : r.rsi < 35 ? 'var(--amber)' : 'var(--text)'};">${r.rsi.toFixed(1)}</td>
-      <td>${r.volRat.toFixed(2)}×</td>
-    </tr>
-  `).join('');
+  const keys=['c1','c2','c3','c4','c5','c6','c7','c8','c9','c10'];
+  const maxEd=+document.getElementById('ema20dist').value;
+  let rowNum=0;
+  body.innerHTML=data.map(r=>{
+    rowNum++;
+    const sigClass={BUY:'pill-buy',WATCH:'pill-watch',FAIL:'pill-fail'}[r.signal]||'pill-fail';
+    const dots=keys.map(k=>{
+      const el=document.getElementById(k); if(!el||!el.checked)return`<span class="ck ck-off"></span>`;
+      return`<span class="ck ${r.results[k]?'ck-pass':'ck-fail'}" title="${k}:${r.results[k]?'pass':'fail'}"></span>`;
+    }).join('');
+    const p=Math.min(100,(r.ema20dist/maxEd)*100);
+    const bc=r.ema20dist<=maxEd?(r.aboveEma20?'var(--green)':'var(--amber)'):'var(--red)';
+    const proxBar=`<div style="display:flex;align-items:center;gap:4px;"><div class="prox-bar"><div class="prox-fill" style="width:${p}%;background:${bc};"></div></div><span style="color:${bc};font-size:9px;">${r.ema20dist.toFixed(1)}%${r.aboveEma20?'↑':'↓'}</span></div>`;
+    const rsiCol=r.rsi===null?'var(--muted)':r.rsi>70?'var(--red)':r.rsi<30?'var(--amber)':'var(--green)';
+    const scoreCol=r.passed>=r.required?'var(--green)':r.passed>=r.required*.7?'var(--amber)':'var(--red)';
+    const scol=SECTOR_COLORS[r.sector]||'#5a6480';
+    const srcTag=r.source==='stooq'?'src-stooq':r.source==='yahoo'?'src-yahoo':'src-err';
+    return`<tr>
+      <td class="sym-cell">${rowNum}&nbsp;${r.sym}</td>
+      <td><span class="sector-tag" style="color:${scol};border-color:${scol}30;background:${scol}12;">${r.sector}</span></td>
+      <td style="color:#fff;">${r.close.toFixed(2)}</td>
+      <td class="${r.chg>=0?'pos':'neg'}">${r.chg>=0?'+':''}${r.chg.toFixed(2)}%</td>
+      <td><span class="pill ${sigClass}">${r.signal}</span></td>
+      <td>${dots}</td>
+      <td>${proxBar}</td>
+      <td class="neu" style="font-size:10px;">${r.ema20.toFixed(2)}</td>
+      <td class="neu" style="font-size:10px;">${r.wma42.toFixed(2)}</td>
+      <td class="neu" style="font-size:10px;">${r.wma84.toFixed(2)}</td>
+      <td class="${r.volRat>=1.5?'pos':r.volRat>=1?'neu':'neg'}">${r.volRat.toFixed(2)}×</td>
+      <td style="color:${rsiCol};">${r.rsi!==null?r.rsi.toFixed(1):'—'}</td>
+      <td style="color:${scoreCol};font-weight:700;">${r.passed}/${r.required}</td>
+      <td><span class="src-tag ${srcTag}">${r.source.toUpperCase()}</span></td>
+    </tr>`;
+  }).join('');
 }
 
-// Initial structural rendering loop placeholders
-document.getElementById('leaderBars').innerHTML = SECTOR_LIST.slice(0,11).map(s => generateSectorRowHtml(s, 0, true)).join('');
-document.getElementById('laggerBars').innerHTML = SECTOR_LIST.slice(11).map(s => generateSectorRowHtml(s, 0, false)).join('');
-
-function sortGrid(col) {
-  if (activeSort === col) sortAsc = !sortAsc; else { activeSort = col; sortAsc = true; }
-  refreshVisuals();
+function updateStats(){
+  const d=screenResults.filter(r=>r.signal!=='ERR');
+  document.getElementById('st-scanned').textContent=d.length;
+  document.getElementById('st-buy').textContent=d.filter(r=>r.signal==='BUY').length;
+  document.getElementById('st-watch').textContent=d.filter(r=>r.signal==='WATCH').length;
+  document.getElementById('st-ema').textContent=d.filter(r=>r.results?.c9).length;
+  document.getElementById('st-wma').textContent=d.filter(r=>r.wmaAligned).length;
+  document.getElementById('st-err').textContent=screenResults.filter(r=>r.signal==='ERR').length;
 }
 
-function downloadCSV() {
-  if (!globalResults.length) return;
-  const headers = ["Symbol", "Sector", "Close Price", "Dist 52w High", "52w High Price", "Signal", "RSI14"];
-  const content = globalResults.map(r => [r.sym, r.sector, r.close, r.dist52w, r.high52w, r.signal, r.rsi].join(','));
-  const csvBlob = new Blob([[headers.join(','), ...content].join('\n')], { type: 'text/csv' });
-  const anchor = document.createElement('a');
-  anchor.href = URL.createObjectURL(csvBlob);
-  anchor.download = `nse_drilldown_report.csv`;
-  anchor.click();
+function sortBy(col){
+  if(sortCol===col)sortDir*=-1;else{sortCol=col;sortDir=1;}
+  screenResults.sort((a,b)=>{
+    let av=a[col],bv=b[col];
+    if(typeof av==='string')return av.localeCompare(bv)*sortDir;
+    return((av||0)-(bv||0))*sortDir;
+  });
+  applyFilter();
+}
+
+function exportCSV(){
+  if(!screenResults.length){alert('No results.');return;}
+  const h=['Symbol','Sector','Close','Chg%','Signal','EMA20','EMA20Dist%','AboveEMA20','WMA42','WMA84','VolRatio','RSI14','Score','Source'];
+  const rows=screenResults.map(r=>[
+    r.sym,r.sector,r.close.toFixed(2),r.chg.toFixed(2),r.signal,
+    r.ema20.toFixed(2),r.ema20dist.toFixed(2),r.aboveEma20?'YES':'NO',
+    r.wma42.toFixed(2),r.wma84.toFixed(2),r.volRat.toFixed(2),
+    r.rsi!==null?r.rsi.toFixed(1):'',`${r.passed}/${r.required}`,r.source
+  ]);
+  const csv=[h,...rows].map(r=>r.join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download=`nse_screen_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+}
+
+function clearAll(){
+  screenResults=[];
+  document.getElementById('resultBody').innerHTML=`<tr><td colspan="14"><div class="empty"><p>Cleared.</p></div></td></tr>`;
+  document.getElementById('progressCard').classList.remove('show');
+  ['st-scanned','st-buy','st-watch','st-ema','st-wma','st-err'].forEach(id=>document.getElementById(id).textContent='—');
 }
 </script>
 </body>
