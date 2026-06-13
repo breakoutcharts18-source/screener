@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>BREAKOUTCHARTS — NSE Liquid Screener</title>
+<title>BREAKOUTCHARTS — NSE Stock Screener</title>
 <style>
 :root{--bg:#0d0f14;--surface:#13161e;--border:#1e2330;--border2:#252b3b;--text:#c8d0e0;--muted:#5a6480;--accent:#3b82f6;--green:#22c55e;--red:#ef4444;--amber:#f59e0b;--cyan:#06b6d4;--purple:#a855f7;--font:'Inter','Segoe UI',system-ui,sans-serif;--mono:'JetBrains Mono','Fira Code',monospace;}
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -62,26 +62,9 @@ select option{background:var(--surface);}
 .stat-card .val{font-size:20px;font-weight:700;font-family:var(--mono);color:#fff;line-height:1;}
 .stat-card .lbl{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:4px;}
 
-/* CONDITIONS PANEL */
-.layout{display:grid;grid-template-columns:280px 1fr;gap:14px;}
-.cond-panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;height:fit-content;}
-.cond-panel-head{padding:11px 14px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.015);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;}
-.cond-body{padding:12px;}
-.cond-group{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:7px;padding:10px 12px;margin-bottom:8px;}
-.cond-group-head{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px;}
-.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);}
-.toggle-row:last-child{border-bottom:none;}
-.tl{font-size:10px;color:var(--text);flex:1;}
-.tl small{display:block;font-size:8px;color:var(--muted);margin-top:1px;font-family:var(--mono);}
-.switch{position:relative;width:32px;height:17px;flex-shrink:0;}
-.switch input{opacity:0;width:0;height:0;}
-.slider{position:absolute;inset:0;background:var(--border2);border-radius:9px;cursor:pointer;transition:.2s;}
-.slider::before{content:'';position:absolute;width:11px;height:11px;left:3px;top:3px;background:var(--muted);border-radius:50%;transition:.2s;}
-.switch input:checked+.slider{background:rgba(59,130,246,.35);}
-.switch input:checked+.slider::before{transform:translateX(15px);background:var(--accent);}
-.field{margin-bottom:8px;}
-.field-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.help{font-size:9px;color:var(--muted);margin-top:3px;line-height:1.4;}
+/* LAYOUT UPDATED TO HIDE PARAMETERS FROM PUBLIC UI */
+.layout{display:block;}
+.cond-panel{display:none;}
 
 /* TABLE */
 .table-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
@@ -90,7 +73,6 @@ select option{background:var(--surface);}
 .table-actions{margin-left:auto;display:flex;gap:6px;align-items:center;}
 .btn-sm{padding:5px 11px;font-size:10px;background:var(--border2);color:var(--muted);border:1px solid var(--border);border-radius:5px;cursor:pointer;font-family:var(--font);}
 .btn-sm:hover{color:var(--text);border-color:var(--accent);}
-.tbl-legend{padding:7px 14px;border-bottom:1px solid var(--border);font-size:9px;color:var(--muted);}
 .results-wrap{overflow-x:auto;max-height:65vh;overflow-y:auto;}
 table{width:100%;border-collapse:collapse;}
 thead{position:sticky;top:0;z-index:10;}
@@ -109,10 +91,6 @@ td{padding:8px 10px;font-family:var(--mono);font-size:11px;white-space:nowrap;}
 .pill-buy{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.25);}
 .pill-watch{background:rgba(245,158,11,.12);color:var(--amber);border:1px solid rgba(245,158,11,.25);}
 .pill-fail{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.25);}
-.ck{display:inline-block;width:6px;height:6px;border-radius:50%;margin:0 1px;}
-.ck-pass{background:var(--green);}
-.ck-fail{background:var(--red);opacity:.5;}
-.ck-off{background:var(--border2);opacity:.3;}
 .prox-bar{display:inline-block;width:44px;height:4px;background:var(--border2);border-radius:2px;vertical-align:middle;position:relative;overflow:hidden;}
 .prox-fill{height:100%;border-radius:2px;}
 .src-tag{font-size:8px;padding:1px 5px;border-radius:2px;font-weight:700;}
@@ -123,7 +101,7 @@ td{padding:8px 10px;font-family:var(--mono);font-size:11px;white-space:nowrap;}
 .empty p{font-size:11px;max-width:340px;line-height:1.7;}
 .sector-tag{font-size:8px;padding:1px 5px;border-radius:2px;font-weight:600;background:var(--border2);color:var(--muted);}
 
-@media(max-width:1100px){.layout{grid-template-columns:1fr;}.stat-row{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:1100px){.stat-row{grid-template-columns:repeat(3,1fr);}}
 @media(max-width:600px){.stat-row{grid-template-columns:1fr 1fr;}.main{padding:10px;}header{padding:10px 14px;}}
 </style>
 </head>
@@ -133,44 +111,33 @@ td{padding:8px 10px;font-family:var(--mono);font-size:11px;white-space:nowrap;}
   <div class="logo-mark">B</div>
   <div><div class="logo-text">BREAKOUTCHARTS</div><div class="logo-sub">AI TRADING JOURNAL</div></div>
   <div class="dv"></div>
-  <div class="page-title">NSE Liquid Stock Screener</div>
+  <div class="page-title">NSE Stock Screener</div>
   <div class="hdr-right">
-    <span style="font-size:9px;color:var(--muted);font-family:var(--mono);" id="stockCount">470 stocks · 2L+ daily vol</span>
+    <span style="font-size:9px;color:var(--muted);font-family:var(--mono);" id="stockCount">-- stocks</span>
     <div class="live-pill">EOD AUTO-FETCH</div>
   </div>
 </header>
 
 <div class="main">
 
-  <!-- TOP CONTROLS -->
   <div class="top-bar">
     <div class="top-bar-row">
       <div class="ctrl-group">
         <label>Universe</label>
         <select id="universe" onchange="updateCount()" style="width:180px;">
-          <option value="nifty50">Nifty 50 (50 stocks)</option>
-          <option value="nifty100">Nifty 100 (100 stocks)</option>
-          <option value="nifty200">Nifty 200 (200 stocks)</option>
-          <option value="liquid" selected>NSE Liquid 2L+ (~470 stocks)</option>
+          <option value="nifty50">Nifty 50</option>
+          <option value="nifty100">Nifty 100</option>
+          <option value="nifty500">Nifty 500</option>
+          <option value="midcap150">Nifty Midcap 150</option>
+          <option value="smallcap250">Nifty Smallcap 250</option>
+          <option value="liquid" selected>All NSE 750</option>
         </select>
       </div>
       <div class="ctrl-group">
         <label>Sector Filter</label>
         <select id="sectorFilter" onchange="updateCount()" style="width:160px;">
           <option value="all">All Sectors</option>
-          <option value="BANK">Banking & Finance</option>
-          <option value="IT">Information Technology</option>
-          <option value="PHARMA">Pharma & Healthcare</option>
-          <option value="AUTO">Auto & Auto Ancillary</option>
-          <option value="METAL">Metals & Mining</option>
-          <option value="ENERGY">Energy & Power</option>
-          <option value="FMCG">FMCG & Consumer</option>
-          <option value="INFRA">Infrastructure & Cement</option>
-          <option value="REALTY">Realty</option>
-          <option value="MEDIA">Media & Telecom</option>
-          <option value="CHEM">Chemicals & Fertilizers</option>
-          <option value="TEXTILE">Textile & Apparel</option>
-        </select>
+          </select>
       </div>
       <div class="ctrl-group">
         <label>Data Period</label>
@@ -189,7 +156,7 @@ td{padding:8px 10px;font-family:var(--mono);font-size:11px;white-space:nowrap;}
         </select>
       </div>
       <div style="display:flex;gap:8px;align-items:flex-end;">
-        <button class="run-btn" id="runBtn" onclick="runAll()">⚡ Screen All Stocks</button>
+        <button class="run-btn" id="runBtn" onclick="runAll()">⚡ Screen Universe</button>
         <button class="stop-btn" id="stopBtn" onclick="stopScan()" style="display:none;">⏹ Stop</button>
       </div>
     </div>
@@ -199,7 +166,6 @@ td{padding:8px 10px;font-family:var(--mono);font-size:11px;white-space:nowrap;}
     </div>
   </div>
 
-  <!-- PROGRESS -->
   <div class="progress-card" id="progressCard">
     <div class="prog-top">
       <span class="prog-label">Scanning NSE Stocks</span>
@@ -209,7 +175,6 @@ td{padding:8px 10px;font-family:var(--mono);font-size:11px;white-space:nowrap;}
     <div class="prog-grid" id="progGrid"></div>
   </div>
 
-  <!-- STATS -->
   <div class="stat-row">
     <div class="stat-card"><div class="val" id="st-scanned">—</div><div class="lbl">Scanned</div></div>
     <div class="stat-card"><div class="val" style="color:var(--green)" id="st-buy">—</div><div class="lbl">BUY Signal</div></div>
@@ -221,56 +186,27 @@ td{padding:8px 10px;font-family:var(--mono);font-size:11px;white-space:nowrap;}
 
   <div class="layout">
 
-    <!-- CONDITIONS -->
     <div class="cond-panel">
-      <div class="cond-panel-head">⚙️ Conditions</div>
-      <div class="cond-body">
-
-        <div class="cond-group">
-          <div class="cond-group-head" style="color:var(--accent);">📈 WMA Conditions</div>
-          <div class="toggle-row"><div class="tl">C1 · close > WMA42+1<small>monthly WMA(2)+1</small></div><label class="switch"><input type="checkbox" id="c1" checked><span class="slider"></span></label></div>
-          <div class="toggle-row"><div class="tl">C2 · WMA42 > WMA84+2<small>monthly WMA(2)>WMA(4)+2</small></div><label class="switch"><input type="checkbox" id="c2" checked><span class="slider"></span></label></div>
-          <div class="toggle-row"><div class="tl">C3 · close > WMA30+2<small>weekly WMA(6)+2</small></div><label class="switch"><input type="checkbox" id="c3" checked><span class="slider"></span></label></div>
-          <div class="toggle-row"><div class="tl">C4 · WMA30 > WMA60+2<small>weekly WMA(6)>WMA(12)+2</small></div><label class="switch"><input type="checkbox" id="c4" checked><span class="slider"></span></label></div>
-          <div class="toggle-row"><div class="tl">C5 · close > WMA12[4d]+2<small>lagged 12-day WMA</small></div><label class="switch"><input type="checkbox" id="c5" checked><span class="slider"></span></label></div>
-          <div class="toggle-row"><div class="tl">C6 · close > WMA20[2d]+2<small>lagged 20-day WMA</small></div><label class="switch"><input type="checkbox" id="c6" checked><span class="slider"></span></label></div>
-        </div>
-
-        <div class="cond-group">
-          <div class="cond-group-head" style="color:var(--amber);">💰 Price Range</div>
-          <div class="toggle-row"><div class="tl">C7 · Price gate<small>min ≤ close ≤ max</small></div><label class="switch"><input type="checkbox" id="c7" checked><span class="slider"></span></label></div>
-          <div class="field-row" style="margin-top:8px;">
-            <div class="field"><label>Min ₹</label><input type="number" id="priceMin" value="25"></div>
-            <div class="field"><label>Max ₹</label><input type="number" id="priceMax" value="5000"></div>
-          </div>
-        </div>
-
-        <div class="cond-group">
-          <div class="cond-group-head" style="color:var(--cyan);">📊 Volume</div>
-          <div class="toggle-row"><div class="tl">C8 · Weekly vol > min<small>last 5 days sum</small></div><label class="switch"><input type="checkbox" id="c8" checked><span class="slider"></span></label></div>
-          <div class="field" style="margin-top:8px;"><label>Min Weekly Volume</label><input type="number" id="minVol" value="1000000"><div class="help">1,000,000 = 10L weekly (2L/day avg)</div></div>
-        </div>
-
-        <div class="cond-group" style="border-color:rgba(168,85,247,.3);">
-          <div class="cond-group-head" style="color:var(--purple);">🎯 Near 20 EMA</div>
-          <div class="toggle-row"><div class="tl">C9 · Within X% of EMA20<small>proximity filter</small></div><label class="switch"><input type="checkbox" id="c9" checked><span class="slider"></span></label></div>
-          <div class="field" style="margin-top:8px;"><label>Max % Distance</label><input type="number" id="ema20dist" value="3" min="0.5" max="20" step="0.5"><div class="help">3% = within 3% of EMA20</div></div>
-          <div class="toggle-row" style="margin-top:6px;"><div class="tl">Must be above EMA20<small>bullish side only</small></div><label class="switch"><input type="checkbox" id="c9above" checked><span class="slider"></span></label></div>
-        </div>
-
-        <div class="cond-group">
-          <div class="cond-group-head" style="color:var(--green);">⚙️ Optional</div>
-          <div class="toggle-row"><div class="tl">C10 · RSI 14 range<small>healthy momentum</small></div><label class="switch"><input type="checkbox" id="c10"><span class="slider"></span></label></div>
-          <div class="field-row" style="margin-top:6px;">
-            <div class="field"><label>RSI Min</label><input type="number" id="rsiMin" value="40"></div>
-            <div class="field"><label>RSI Max</label><input type="number" id="rsiMax" value="75"></div>
-          </div>
-        </div>
-
-      </div>
+      <input type="checkbox" id="c1" checked>
+      <input type="checkbox" id="c2" checked>
+      <input type="checkbox" id="c3" checked>
+      <input type="checkbox" id="c4" checked>
+      <input type="checkbox" id="c5" checked>
+      <input type="checkbox" id="c6" checked>
+      <input type="checkbox" id="c7" checked>
+      <input type="checkbox" id="c8" checked>
+      <input type="checkbox" id="c9" checked>
+      <input type="checkbox" id="c10">
+      
+      <input type="number" id="priceMin" value="25">
+      <input type="number" id="priceMax" value="100000">
+      <input type="number" id="minVol" value="100000">
+      <input type="number" id="ema20dist" value="3">
+      <input type="checkbox" id="c9above" checked>
+      <input type="number" id="rsiMin" value="40">
+      <input type="number" id="rsiMax" value="75">
     </div>
 
-    <!-- RESULTS TABLE -->
     <div class="table-card">
       <div class="table-head">
         <h2>📋 Screener Results</h2>
@@ -283,24 +219,10 @@ td{padding:8px 10px;font-family:var(--mono);font-size:11px;white-space:nowrap;}
           </select>
           <select id="sectorResultFilter" onchange="applyFilter()" style="width:auto;padding:4px 8px;font-size:10px;">
             <option value="all">All Sectors</option>
-            <option value="BANK">Banking</option>
-            <option value="IT">IT</option>
-            <option value="PHARMA">Pharma</option>
-            <option value="AUTO">Auto</option>
-            <option value="METAL">Metals</option>
-            <option value="ENERGY">Energy</option>
-            <option value="FMCG">FMCG</option>
-            <option value="INFRA">Infra</option>
-            <option value="REALTY">Realty</option>
-            <option value="CHEM">Chemicals</option>
-          </select>
+            </select>
           <button class="btn-sm" onclick="exportCSV()">↓ Export</button>
           <button class="btn-sm" onclick="clearAll()">✕ Clear</button>
         </div>
-      </div>
-      <div class="tbl-legend">
-        <span style="color:var(--text);font-weight:700;margin-right:6px;">DOTS:</span>
-        C1 close>WMA42 · C2 WMA42>WMA84 · C3 close>WMA30 · C4 WMA30>WMA60 · C5 close>WMA12[4d] · C6 close>WMA20[2d] · C7 price · C8 vol · <span style="color:var(--purple)">C9 EMA20</span> · C10 RSI
       </div>
       <div class="results-wrap">
         <table>
@@ -311,7 +233,6 @@ td{padding:8px 10px;font-family:var(--mono);font-size:11px;white-space:nowrap;}
               <th onclick="sortBy('close')">Close ₹</th>
               <th onclick="sortBy('chg')">Chg %</th>
               <th>Signal</th>
-              <th>C1–C10</th>
               <th onclick="sortBy('ema20dist')">EMA20 Dist</th>
               <th onclick="sortBy('ema20')">EMA20</th>
               <th onclick="sortBy('wma42')">WMA42</th>
@@ -323,10 +244,10 @@ td{padding:8px 10px;font-family:var(--mono);font-size:11px;white-space:nowrap;}
             </tr>
           </thead>
           <tbody id="resultBody">
-            <tr><td colspan="14">
+            <tr><td colspan="13">
               <div class="empty">
                 <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                <p>Select your universe and sector, configure conditions, then click <strong>Screen All Stocks</strong>.<br><br>The screener will auto-fetch EOD data for all NSE liquid stocks (2L+ daily volume) and run your formula.</p>
+                <p>Select your universe and sector, then click <strong>Screen Universe</strong>.<br><br>The screener will auto-fetch EOD data and run your strategy.</p>
               </div>
             </td></tr>
           </tbody>
@@ -339,145 +260,44 @@ td{padding:8px 10px;font-family:var(--mono);font-size:11px;white-space:nowrap;}
 
 <script>
 // ═══════════════════════════════════════════
-// NSE LIQUID STOCKS — 2L+ DAILY AVG VOLUME
-// Format: [symbol, sector]
+// NSE STOCKS DATA (750 stocks mapped)
 // ═══════════════════════════════════════════
 const ALL_STOCKS = [
-  // NIFTY 50
-  ["RELIANCE","ENERGY"],["TCS","IT"],["HDFCBANK","BANK"],["ICICIBANK","BANK"],["INFY","IT"],
-  ["HINDUNILVR","FMCG"],["SBIN","BANK"],["BHARTIARTL","MEDIA"],["ITC","FMCG"],["KOTAKBANK","BANK"],
-  ["LT","INFRA"],["AXISBANK","BANK"],["ASIANPAINT","FMCG"],["MARUTI","AUTO"],["SUNPHARMA","PHARMA"],
-  ["TITAN","FMCG"],["BAJFINANCE","BANK"],["WIPRO","IT"],["HCLTECH","IT"],["ULTRACEMCO","INFRA"],
-  ["NTPC","ENERGY"],["POWERGRID","ENERGY"],["JSWSTEEL","METAL"],["TATAMOTORS","AUTO"],["TATASTEEL","METAL"],
-  ["ADANIENT","ENERGY"],["ADANIPORTS","INFRA"],["ONGC","ENERGY"],["COALINDIA","ENERGY"],["BPCL","ENERGY"],
-  ["BAJAJFINSV","BANK"],["NESTLEIND","FMCG"],["HDFCLIFE","BANK"],["SBILIFE","BANK"],["DIVISLAB","PHARMA"],
-  ["DRREDDY","PHARMA"],["CIPLA","PHARMA"],["TECHM","IT"],["GRASIM","INFRA"],["INDUSINDBK","BANK"],
-  ["EICHERMOT","AUTO"],["HEROMOTOCO","AUTO"],["BRITANNIA","FMCG"],["APOLLOHOSP","PHARMA"],["TATACONSUM","FMCG"],
-  ["HINDALCO","METAL"],["VEDL","METAL"],["M&M","AUTO"],["BAJAJ-AUTO","AUTO"],["LTIM","IT"],
-
-  // NIFTY NEXT 50
-  ["ADANIGREEN","ENERGY"],["ADANITRANS","ENERGY"],["AMBUJACEM","INFRA"],["AUROPHARMA","PHARMA"],
-  ["BANDHANBNK","BANK"],["BERGEPAINT","FMCG"],["BEL","INFRA"],["BOSCHLTD","AUTO"],["CANBK","BANK"],
-  ["CHOLAFIN","BANK"],["COLPAL","FMCG"],["CONCOR","INFRA"],["CUMMINSIND","AUTO"],["DLF","REALTY"],
-  ["FEDERALBNK","BANK"],["GAIL","ENERGY"],["GODREJCP","FMCG"],["GODREJPROP","REALTY"],["HAL","INFRA"],
-  ["HAVELLS","AUTO"],["IDFCFIRSTB","BANK"],["IGL","ENERGY"],["INDUSTOWER","MEDIA"],["IOC","ENERGY"],
-  ["IRCTC","INFRA"],["JINDALSTEL","METAL"],["JUBLFOOD","FMCG"],["LICHSGFIN","BANK"],["LTF","BANK"],
-  ["LUPIN","PHARMA"],["MARICO","FMCG"],["MCDOWELL-N","FMCG"],["MUTHOOTFIN","BANK"],["NMDC","METAL"],
-  ["PAGEIND","TEXTILE"],["PETRONET","ENERGY"],["PIIND","CHEM"],["PNB","BANK"],["RECLTD","BANK"],
-  ["SAIL","METAL"],["SHREECEM","INFRA"],["SIEMENS","AUTO"],["SRF","CHEM"],["TATAPOWER","ENERGY"],
-  ["TORNTPHARM","PHARMA"],["TRENT","FMCG"],["TVSMOTOR","AUTO"],["UBL","FMCG"],["UNIONBANK","BANK"],["UPL","CHEM"],
-
-  // BANKING & FINANCE
-  ["AUBANK","BANK"],["BANKBARODA","BANK"],["CENTRALBK","BANK"],["DCBBANK","BANK"],["EQUITASBNK","BANK"],
-  ["FINPIPE","BANK"],["HDFCAMC","BANK"],["ICICIGI","BANK"],["ICICIPRULI","BANK"],["IDBI","BANK"],
-  ["INDIANB","BANK"],["INDIAMART","IT"],["IOB","BANK"],["KARURVYSYA","BANK"],["KOTAKMAHIND","BANK"],
-  ["M&MFIN","BANK"],["MANAPPURAM","BANK"],["MASFIN","BANK"],["NAUKRI","IT"],["PFC","BANK"],
-  ["PNBHOUSING","BANK"],["RBLBANK","BANK"],["SHRIRAMFIN","BANK"],["SINDBANK","BANK"],["SOUTHBANK","BANK"],
-  ["UJJIVANSFB","BANK"],["YESBANK","BANK"],["ABCAPITAL","BANK"],["ANGELONE","BANK"],["BAJAJHLDNG","BANK"],
-
-  // IT & TECH
-  ["COFORGE","IT"],["CYIENT","IT"],["HAPPSTMNDS","IT"],["HEXAWARE","IT"],["KPITTECH","IT"],
-  ["LTTS","IT"],["MASTEK","IT"],["MPHASIS","IT"],["OFSS","IT"],["PERSISTENT","IT"],
-  ["ROUTE","IT"],["SONATSOFTW","IT"],["TATAELXSI","IT"],["ZENSARTECH","IT"],
-
-  // PHARMA & HEALTHCARE
-  ["ABBOTINDIA","PHARMA"],["ALKEM","PHARMA"],["APLLTD","PHARMA"],["BIOCON","PHARMA"],["ERIS","PHARMA"],
-  ["FORTIS","PHARMA"],["GLENMARK","PHARMA"],["GRANULES","PHARMA"],["IPCALAB","PHARMA"],["LALPATHLAB","PHARMA"],
-  ["LAURUSLABS","PHARMA"],["MAXHEALTH","PHARMA"],["METROPOLIS","PHARMA"],["NATCOPHARM","PHARMA"],["PFIZER","PHARMA"],
-  ["STAR","PHARMA"],["SYNGENE","PHARMA"],["TORNTPOWER","ENERGY"],["ZYDUSLIFE","PHARMA"],["MANKIND","PHARMA"],
-  ["MEDANTA","PHARMA"],["RAINBOW","PHARMA"],["AARTIIND","CHEM"],
-
-  // AUTO & AUTO ANCILLARY
-  ["AMARAJABAT","AUTO"],["ASHOKLEY","AUTO"],["BALKRISIND","AUTO"],["BHARATFORG","AUTO"],["EXIDEIND","AUTO"],
-  ["ESCORTS","AUTO"],["JBMA","AUTO"],["MRF","AUTO"],["MOTHERSON","AUTO"],["OLECTRA","AUTO"],
-  ["SCHAEFFLER","AUTO"],["SOLARINDS","CHEM"],["SUNDRMFAST","AUTO"],["SUPRAJIT","AUTO"],["TIINDIA","AUTO"],
-  ["WABCOINDIA","AUTO"],["TATACHEM","CHEM"],
-
-  // METALS & MINING
-  ["APL","METAL"],["APLAPOLLO","METAL"],["HINDZINC","METAL"],["JINDALPOLY","METAL"],["JSWENERGY","ENERGY"],
-  ["NATIONALUM","METAL"],["RATNAMANI","METAL"],["WELCORP","METAL"],["GMRINFRA","INFRA"],
-
-  // ENERGY & POWER
-  ["ADANIPOWER","ENERGY"],["CESC","ENERGY"],["CLEAN","ENERGY"],["GSPL","ENERGY"],["IEX","ENERGY"],
-  ["INDRAMEDCO","PHARMA"],["MAHABANK","BANK"],["NHPC","ENERGY"],["NLCINDIA","ENERGY"],["OIL","ENERGY"],
-  ["RITES","INFRA"],["SJVN","ENERGY"],["THERMAX","AUTO"],["TORNTPOWE","ENERGY"],
-
-  // FMCG & CONSUMER
-  ["BAJAJELEC","AUTO"],["BATAINDIA","FMCG"],["CAMPUS","FMCG"],["CROMPTON","AUTO"],["DABUR","FMCG"],
-  ["EMAMILTD","FMCG"],["GILLETTE","FMCG"],["GODREJIND","FMCG"],["JYOTHYLAB","FMCG"],["KANSAINER","FMCG"],
-  ["KAJARIACER","INFRA"],["NYKAA","FMCG"],["PATANJALI","FMCG"],["RADICO","FMCG"],["RAJESHEXPO","FMCG"],
-  ["RELAXO","FMCG"],["SAPPHIRE","TEXTILE"],["VAIBHAVGBL","FMCG"],["VBL","FMCG"],["VSTIND","FMCG"],
-  ["WHIRLPOOL","FMCG"],["ZOMATO","FMCG"],["PAYTM","IT"],["POLICYBZR","BANK"],["DMART","FMCG"],
-
-  // INFRA, CEMENT & REALTY
-  ["ACC","INFRA"],["ABBOTINDIA","PHARMA"],["BRIGADE","REALTY"],["CAMS","BANK"],["DALBHARAT","INFRA"],
-  ["ENGINERSIN","INFRA"],["GPPL","INFRA"],["HEIDELBERG","INFRA"],["HFCL","MEDIA"],["IRB","INFRA"],
-  ["IRFC","INFRA"],["JKCEMENT","INFRA"],["KNRCON","INFRA"],["MACROTECH","REALTY"],["MAHSEAMLES","METAL"],
-  ["NIACL","BANK"],["OBEROIRLTY","REALTY"],["PHOENIXLTD","REALTY"],["PRESTIGE","REALTY"],["PRSMJOHNSN","INFRA"],
-  ["RAMCOCEM","INFRA"],["SBIN","BANK"],["SOBHA","REALTY"],["SUNTECK","REALTY"],["SUPREMEIND","CHEM"],
-
-  // CHEMICALS & FERTILIZERS
-  ["ATUL","CHEM"],["BALAMINES","CHEM"],["BASF","CHEM"],["CASTROLIND","ENERGY"],["CHAMBLFERT","CHEM"],
-  ["COROMANDEL","CHEM"],["DEEPAKNTR","CHEM"],["GNFC","CHEM"],["GSFC","CHEM"],["NAVINFLUOR","CHEM"],
-  ["NOCIL","CHEM"],["PCBL","CHEM"],["PIDILITIND","CHEM"],["RALLIS","CHEM"],["SUDARSCHEM","CHEM"],
-  ["TATACHEM","CHEM"],["VINATI","CHEM"],["VINATIORGA","CHEM"],
-
-  // MEDIA & TELECOM
-  ["NETWORK18","MEDIA"],["PVRINOX","MEDIA"],["SUNTV","MEDIA"],["TATACOMM","MEDIA"],["ZEEL","MEDIA"],
-
-  // TEXTILE
-  ["ARVIND","TEXTILE"],["GOKEX","TEXTILE"],["RAYMOND","TEXTILE"],["TRIDENT","TEXTILE"],["VGUARD","AUTO"],
-  ["WELSPUNLIV","TEXTILE"],["KITEX","TEXTILE"],
-
-  // REALTY & MISC LIQUID
-  ["EIHOTEL","FMCG"],["INDHOTEL","FMCG"],["LEMONTREE","FMCG"],["MAHINDCIE","AUTO"],["MAHLOG","INFRA"],
-  ["MMFINANCE","BANK"],["MTAR","AUTO"],["NUVOCO","INFRA"],["POWERINDIA","ENERGY"],["SAREGAMA","MEDIA"],
-  ["TANLA","IT"],["TEJASNET","MEDIA"],["TIMKEN","AUTO"],["TRITURBINE","ENERGY"],["VSTINDS","FMCG"],
-  ["WELENT","INFRA"],["WPIL","AUTO"],["XCHANGING","IT"],["ZFCVINDIA","AUTO"],
-
-  // ADDITIONAL HIGH-VOLUME NSE STOCKS
-  ["ABFRL","TEXTILE"],["ALOKINDS","TEXTILE"],["AFFLE","IT"],["ANANTRAJ","REALTY"],["APTUS","BANK"],
-  ["ASTRAL","INFRA"],["BSOFT","IT"],["CARBORUNIV","CHEM"],["CARTRADE","AUTO"],["CDSL","BANK"],
-  ["CLEAN","ENERGY"],["CSBBANK","BANK"],["DELHIVERY","INFRA"],["DEVYANI","FMCG"],["DIXON","AUTO"],
-  ["EASEMYTRIP","FMCG"],["EDELWEISS","BANK"],["ELECON","AUTO"],["EMUDHRA","IT"],["EPIGRAL","CHEM"],
-  ["FINEORG","CHEM"],["FINOLEXCAB","AUTO"],["GMDCLTD","METAL"],["GRAPHITE","METAL"],["GREENPANEL","INFRA"],
-  ["HAPPYFORGE","AUTO"],["HBLPOWER","AUTO"],["HINDPETRO","ENERGY"],["HOMEFIRST","BANK"],["IBREALEST","REALTY"],
-  ["IDEAFORGE","IT"],["IFBIND","AUTO"],["INDIACEM","INFRA"],["INGERRAND","AUTO"],["INTELLECT","IT"],
-  ["INVENTURE","BANK"],["IOLCP","CHEM"],["JKLAKSHMI","INFRA"],["JSWHL","METAL"],["JUSTDIAL","IT"],
-  ["KALPATPOWR","ENERGY"],["KFINTECH","BANK"],["KIRLOSENG","AUTO"],["KRBL","FMCG"],["LICI","BANK"],
-  ["LINDEINDIA","CHEM"],["LLOYDSME","AUTO"],["LODHA","REALTY"],["MAPMYINDIA","IT"],["MEDPLUS","PHARMA"],
-  ["METROBRAND","FMCG"],["MFSL","BANK"],["MIDHANI","METAL"],["MINDTREE","IT"],["MOTILALOFS","BANK"],
-  ["MSTCINDIA","INFRA"],["NESCO","REALTY"],["NETWORK18","MEDIA"],["NSLNISP","METAL"],["ONEPOINT","BANK"],
-  ["OPTIEMUS","IT"],["PGHH","FMCG"],["PRAJIND","ENERGY"],["PRINCEPIPE","INFRA"],["RAIN","CHEM"],
-  ["RATEGAIN","IT"],["REDINGTON","IT"],["ROSSARI","CHEM"],["SAFARI","FMCG"],["SAGCEM","INFRA"],
-  ["SIGNATURE","BANK"],["SKIPPER","INFRA"],["SMSPHARMA","PHARMA"],["SOLARA","PHARMA"],["SONACOMS","AUTO"],
-  ["SPANDANA","BANK"],["SRTRANSFIN","BANK"],["STARHEALTH","BANK"],["SUMICHEM","CHEM"],["SUVEN","PHARMA"],
-  ["SWSOLAR","ENERGY"],["TECHNOE","IT"],["TEGA","METAL"],["TITAGARH","INFRA"],["UCOBANK","BANK"],
-  ["UJJIVAN","BANK"],["UTIAMC","BANK"],["VARROC","AUTO"],["VGUARD","AUTO"],["VIRINCHI","IT"],
-  ["WAAREEENE","ENERGY"],["WATERBASE","FMCG"],["WELCORP","METAL"],["WESTLIFE","FMCG"],["WINDMACHINES","ENERGY"],
+  ["ABDL", "Tobacco - Alcohol"], ["AKUMS", "Pharma"], ["APARINDS", "Electric Equipments"], ["ASIANPAINT", "Paints - Pigments"], ["AVALON", "IT - Hardware"], ["BOSCHLTD", "Auto Ancillary"], ["CAPLIPOINT", "Pharma"], ["CERA", "Ceramics"], ["CGCL", "Finance - Investment - Management"], ["CUPID", "FMCG"], ["DATAPATTNS", "Defence"], ["EMMVEE", "-"], ["EQUITASBNK", "Banks"], ["FEDERALBNK", "Banks"], ["ICIL", "Textile"], ["IFCI", "Finance - Housing - NBFC"], ["INOXGREEN", "Engineering - Construction"], ["J&KBANK", "Banks"], ["KOTAKBANK", "Banks"], ["KTKBANK", "Banks"], ["MAHABANK", "Banks"], ["NAVINFLUOR", "Chemicals"], ["NUVAMA", "Finance - Investment - Management"], ["PARAS", "Defence"], ["PIDILITIND", "Chemicals"], ["PIRAMALFIN", "-"], ["PRIVISCL", "Chemicals"], ["QPOWER", "Electric Equipments"], ["RBLBANK", "Banks"], ["SAATVIKGL", "IT - Hardware"], ["SAILIFE", "Pharma"], ["SFL", "FMCG"], ["SOUTHBANK", "Banks"], ["SPARC", "Trading"], ["STYL", "Finance - Investment - Management"], ["SYRMA", "IT - Hardware"], ["TEJASNET", "Telecommunication"], ["ABSLAMC", "Finance - Investment - Management"], ["ACE", "Construction"], ["ADANIPORTS", "Infrastructure"], ["AEGISLOG", "Trading"], ["AEGISVOPAK", "Trading"], ["AIIL", "Finance - Investment - Management"], ["ANTHEM", "Pharma"], ["APOLLOHOSP", "Hospital - Healthcare Services"], ["APTUS", "Finance - Housing - NBFC"], ["ASTERDM", "Hospital - Healthcare Services"], ["ASTRAMICRO", "Defence"], ["AXISBANK", "Banks"], ["BANCOINDIA", "Auto Ancillary"], ["BLUEJET", "Pharma"], ["CHAMBLFERT", "Fertilizers - Pesticides"], ["CONCORDBIO", "Pharma"], ["DEEPAKFERT", "Chemicals"], ["DIACABS", "Cable"], ["ELECON", "Engg - Industrial Equipments"], ["ELLEN", "Chemicals"], ["FIEMIND", "Auto Ancillary"], ["GAIL", "Oil - Gas"], ["GMRAIRPORT", "Travel"], ["GROWW", "Finance - Investment - Management"], ["HONAUT", "Consumer Durables"], ["ICICIBANK", "Banks"], ["IDEA", "Telecommunication"], ["IDFCFIRSTB", "Banks"], ["IIFL", "Finance - Housing - NBFC"], ["INDHOTEL", "Hotels"], ["INDIGO", "Travel"], ["IXIGO", "Travel"], ["JBCHEPHARM", "Pharma"], ["JSWINFRA", "Infrastructure"], ["KIRLOSBROS", "Engg - Industrial Equipments"], ["KRBL", "Food"], ["KRN", "Engg - Industrial Equipments"], ["MANORAMA", "Chemicals"], ["MOTHERSON", "Auto Ancillary"], ["MSTCLTD", "Trading"], ["NBCC", "Construction"], ["NEOGEN", "Chemicals"], ["NETWEB", "IT - Hardware"], ["POWERMECH", "Engineering - Construction"], ["PRUDENT", "Finance - Investment - Management"], ["QUESS", "IT - BPO - ITeS"], ["RATEGAIN", "IT - Software"], ["RBA", "Hotels"], ["RUBICON", "Trading"], ["SHRIPISTON", "Auto Ancillary"], ["SMLMAH", "Auto"], ["SUPRIYA", "Pharma"], ["SWSOLAR", "Engineering - Construction"], ["TBOTEK", "Travel"], ["THANGAMAYL", "Diamond - Jewellery"], ["AAVAS", "Finance - Housing - NBFC"], ["AETHER", "Chemicals"], ["AJANTPHARM", "Pharma"], ["ALKYLAMINE", "Chemicals"], ["AUBANK", "Banks"], ["BANKBARODA", "Banks"], ["BELRISE", "Auto Ancillary"], ["BLACKBUCK", "Logistics"], ["BORORENEW", "Manufacturing"], ["CHOLAFIN", "Finance - Housing - NBFC"], ["COROMANDEL", "Fertilizers - Pesticides"], ["EPL", "Packaging"], ["FORTIS", "Hospital - Healthcare Services"], ["HCC", "Engineering - Construction"], ["HOMEFIRST", "Finance - Housing - NBFC"], ["HYUNDAI", "Auto"], ["IFBIND", "Consumer Durables"], ["INTELLECT", "IT - Software"], ["JBMA", "Auto Ancillary"], ["KEI", "Cable"], ["KPIL", "Engineering - Construction"], ["KSB", "Engg - Industrial Equipments"], ["MARKSANS", "Pharma"], ["MMTC", "Trading"], ["MOTILALOFS", "Finance - Stock Broking"], ["NEULANDLAB", "Pharma"], ["NYKAA", "Retail"], ["OSWALPUMPS", "Engg - Industrial Equipments"], ["PAGEIND", "Textile"], ["RKFORGE", "Forgings"], ["SHAKTIPUMP", "Engg - Industrial Equipments"], ["SURYAROSNI", "Metals - Steel - Iron Products"], ["TATACAP", "Finance - Housing - NBFC"], ["THELEELA", "Hotels"], ["AADHARHFC", "Finance - Housing - NBFC"], ["ARVIND", "Textile"], ["ASHOKA", "Engineering - Construction"], ["ATHERENERG", "Auto"], ["AUROPHARMA", "Pharma"], ["AXISCADES", "IT - Software"], ["BALAMINES", "Chemicals"], ["BANKINDIA", "Banks"], ["BIKAJI", "Food"], ["CORONA", "-"], ["CUB", "Banks"], ["EICHERMOT", "Auto"], ["HONASA", "Trading"], ["HSCL", "Chemicals"], ["IDBI", "Banks"], ["INDIANB", "Banks"], ["INDIGOPNTS", "Paints - Pigments"], ["JSWDULUX", "-"], ["JYOTICNC", "Engg - Industrial Equipments"], ["KIMS", "Hospital - Healthcare Services"], ["KIRLOSENG", "Engg - Industrial Equipments"], ["MEDANTA", "Hospital - Healthcare Services"], ["MIDHANI", "Metals - Steel - Iron Products"], ["NAM-INDIA", "Finance - Investment - Management"], ["NAZARA", "IT - Software"], ["OLECTRA", "Auto"], ["PARADEEP", "Fertilizers - Pesticides"], ["PNB", "Banks"], ["POLYMED", "Hospital - Healthcare Services"], ["PTCIL", "Forgings"], ["RAIN", "Chemicals - Petrochem"], ["RAYMONDLSL", "Textile"], ["REFEX", "Chemicals"], ["RELAXO", "Footwear"], ["SANSERA", "Auto Ancillary"], ["SHYAMMETL", "Metals - Steel - Iron Products"], ["SKIPPER", "Engg - Industrial Equipments"], ["SRF", "Chemicals"], ["STAR", "Pharma"], ["TATATECH", "IT - Software"], ["360ONE", "Finance - Stock Broking"], ["ABCAPITAL", "Finance - Housing - NBFC"], ["ANGELONE", "Finance - Stock Broking"], ["APOLLO", "IT - Hardware"], ["APOLLOTYRE", "Tyres"], ["BANDHANBNK", "Banks"], ["BHARATFORG", "Forgings"], ["CANFINHOME", "Finance - Housing - NBFC"], ["CARBORUNIV", "Manufacturing"], ["CEATLTD", "Tyres"], ["CHOLAHLDNG", "Finance - Investment - Management"], ["CRAMC", "Finance - Investment - Management"], ["CREDITACC", "Finance - Housing - NBFC"], ["CSBBANK", "Banks"], ["DCBBANK", "Banks"], ["DIXON", "Consumer Durables"], ["DOMS", "Paper - Printing"], ["ELGIEQUIP", "Engg - Industrial Equipments"], ["EMCURE", "Pharma"], ["ERIS", "Pharma"], ["GABRIEL", "Auto Ancillary"], ["GAEL", "Chemicals"], ["GOKULAGRO", "Food"], ["GREAVESCOT", "Engg - Industrial Equipments"], ["GRWRHITECH", "Plastic"], ["GVT&D", "Electric Equipments"], ["IGIL", "Trading"], ["IKS", "IT - BPO - ITeS"], ["INDIAGLYCO", "Tobacco - Alcohol"], ["INDIASHLTR", "Finance - Housing - NBFC"], ["ITI", "Telecommunication"], ["JAMNAAUTO", "Auto Ancillary"], ["JSLL", "Trading"], ["JSWSTEEL", "Metals - Steel - Iron Products"], ["JUBLPHARMA", "Pharma"], ["JUSTDIAL", "Trading"], ["KARURVYSYA", "Banks"], ["KPRMILL", "Textile"], ["LICHSGFIN", "Finance - Housing - NBFC"], ["LLOYDSENGG", "Engg - Industrial Equipments"], ["LLOYDSME", "Metals - Steel - Iron Products"], ["M&MFIN", "Finance - Housing - NBFC"], ["MAHSEAMLES", "Metals - Steel - Iron Products"], ["MAXHEALTH", "Hospital - Healthcare Services"], ["MINDACORP", "Auto Ancillary"], ["MTARTECH", "Engineering"], ["NIACL", "Insurance"], ["NIVABUPA", "Insurance"], ["POLYCAB", "Cable"], ["RADICO", "Tobacco - Alcohol"], ["RECLTD", "Finance - Housing - NBFC"], ["RELIGARE", "Finance - Investment - Management"], ["RRKABEL", "Cable"], ["SAMHI", "Hotels"], ["SAREGAMA", "Media"], ["SBIN", "Banks"], ["SHARDACROP", "Fertilizers - Pesticides"], ["SHRIRAMFIN", "Finance - Housing - NBFC"], ["SKFINDUS", "-"], ["SYNGENE", "Trading"], ["TATACOMM", "Telecommunication"], ["TEGA", "Engg - Industrial Equipments"], ["ALIVUS", "Pharma"], ["ANANDRATHI", "Finance - Investment - Management"], ["ANUP", "Engg - Industrial Equipments"], ["ASHOKLEY", "Auto"], ["AVL", "Retail"], ["AZAD", "Engg - Industrial Equipments"], ["BAJFINANCE", "Finance - Housing - NBFC"], ["BECTORFOOD", "Food"], ["BERGEPAINT", "Paints - Pigments"], ["BPCL", "Oil - Gas"], ["BRIGADE", "Construction"], ["BSE", "Finance - Investment - Management"], ["CGPOWER", "Electric Equipments"], ["CRAFTSMAN", "Auto Ancillary"], ["DATAMATICS", "IT - Software"], ["EIEL", "Engineering - Construction"], ["ENGINERSIN", "Engineering"], ["ENRIN", "Electric Equipments"], ["EXIDEIND", "Batteries"], ["FACT", "Fertilizers - Pesticides"], ["FLUOROCHEM", "Chemicals"], ["GLAND", "Pharma"], ["GODFRYPHLP", "Tobacco - Alcohol"], ["GRASIM", "Trading"], ["HEROMOTOCO", "Auto"], ["HFCL", "Telecommunication"], ["IGL", "Oil - Gas"], ["INOXWIND", "Electric Equipments"], ["IOC", "Oil - Gas"], ["JSFB", "Banks"], ["JSL", "Metals - Steel - Iron Products"], ["KEC", "Engineering - Construction"], ["LLOYDSENT", "Trading"], ["LT", "Engineering - Construction"], ["LXCHEM", "Chemicals"], ["MANAPPURAM", "Finance - Housing - NBFC"], ["MARICO", "Food"], ["MARUTI", "Auto"], ["MRPL", "Oil - Gas"], ["NSLNISP", "Metals - Steel - Iron Products"], ["OLAELEC", "Auto"], ["PCBL", "Chemicals"], ["PIIND", "Fertilizers - Pesticides"], ["PINELABS", "Finance - Investment - Management"], ["POONAWALLA", "Finance - Housing - NBFC"], ["PRESTIGE", "Construction"], ["RAINBOW", "Hospital - Healthcare Services"], ["RCF", "Fertilizers - Pesticides"], ["REDINGTON", "Trading"], ["ROUTE", "IT - Software"], ["SCI", "Ship - Ship Building"], ["SHAREINDIA", "Finance - Stock Broking"], ["SHILPAMED", "Pharma"], ["SKYGOLD", "Diamond - Jewellery"], ["SPLPETRO", "Chemicals - Petrochem"], ["STARCEMENT", "Cement"], ["STLTECH", "Cable"], ["SUZLON", "Electric Equipments"], ["TEXRAIL", "Railway"], ["THERMAX", "Engg - Industrial Equipments"], ["THOMASCOOK", "Travel"], ["THYROCARE", "Hospital - Healthcare Services"], ["AARTIPHARM", "Pharma"], ["ACI", "Chemicals"], ["ADANIGREEN", "Power"], ["ADVENZYMES", "Pharma"], ["AHLUCONT", "Construction"], ["ANANTRAJ", "Construction"], ["BALRAMCHIN", "Sugar"], ["BBOX", "Telecommunication"], ["BIOCON", "Pharma"], ["BLS", "Trading"], ["CAMS", "Finance - Investment - Management"], ["CANBK", "Banks"], ["CENTRALBK", "Banks"], ["COLPAL", "FMCG"], ["CPPLUS", "Trading"], ["DBREALTY", "Construction"], ["DLF", "Construction"], ["EMBDL", "Construction"], ["FINCABLES", "Cable"], ["GALLANTT", "Metals - Steel - Iron Products"], ["GNFC", "Chemicals"], ["GODREJCP", "FMCG"], ["GRANULES", "Pharma"], ["GRAVITA", "Metals - Non Ferrous"], ["HDFCBANK", "Banks"], ["HINDUNILVR", "FMCG"], ["IIFLCAPS", "Finance - Stock Broking"], ["INDIACEM", "Cement"], ["INDIAMART", "Retail"], ["INDUSINDBK", "Banks"], ["INOXINDIA", "Engg - Industrial Equipments"], ["IRCON", "Engineering - Construction"], ["JAYNECOIND", "Metals - Steel - Iron Products"], ["JINDALSAW", "Metals - Steel - Iron Products"], ["JMFINANCIL", "Finance - Investment - Management"], ["JSWCEMENT", "Cement"], ["KIRLPNU", "Engg - Industrial Equipments"], ["LODHA", "Construction"], ["LTF", "Finance - Housing - NBFC"], ["LTFOODS", "Food"], ["LUPIN", "Pharma"], ["MCX", "Finance - Stock Broking"], ["MEDPLUS", "Retail"], ["NCC", "Engineering - Construction"], ["NMDC", "Mining"], ["PAYTM", "Finance - Investment - Management"], ["PETRONET", "Chemicals"], ["PFOCUS", "Media"], ["PNBHOUSING", "Finance - Housing - NBFC"], ["POLICYBZR", "Finance - Investment - Management"], ["PTC", "Power"], ["PWL", "-"], ["RAMCOCEM", "Cement"], ["RATNAMANI", "Metals - Steel - Iron Products"], ["RTNINDIA", "Trading"], ["SANDUMA", "Mining"], ["SUDEEPPHRM", "-"], ["SUNDARMFIN", "Finance - Housing - NBFC"], ["TARIL", "Electric Equipments"], ["TATAINVEST", "Finance - Housing - NBFC"], ["TDPOWERSYS", "Electric Equipments"], ["TI", "Tobacco - Alcohol"], ["ABBOTINDIA", "Pharma"], ["ADANIPOWER", "Power"], ["AEQUS", "-"], ["AFCONS", "Engineering - Construction"], ["AMBUJACEM", "Cement"], ["ASAHIINDIA", "Manufacturing"], ["ASHAPURMIN", "Mining"], ["ATGL", "Oil - Gas"], ["AURIONPRO", "IT - Software"], ["AVANTIFEED", "Agriculture"], ["AWFIS", "Trading"], ["AWL", "Food"], ["BBTC", "Agriculture"], ["BDL", "Defence"], ["BEML", "Construction"], ["BHARTIARTL", "Telecommunication"], ["CARTRADE", "Auto"], ["CDSL", "Finance - Investment - Management"], ["CHOICEIN", "Finance - Stock Broking"], ["CIEINDIA", "Auto Ancillary"], ["CMSINFO", "Trading"], ["CYIENT", "IT - Software"], ["DBL", "Construction"], ["EDELWEISS", "Finance - Housing - NBFC"], ["FEDFINA", "Finance - Housing - NBFC"], ["FIVESTAR", "Finance - Housing - NBFC"], ["FORCEMOT", "Auto"], ["GMDCLTD", "Mining"], ["GODREJIND", "Chemicals"], ["GODREJPROP", "Construction"], ["GRSE", "Ship - Ship Building"], ["HBLENGINE", "Batteries"], ["HEMIPROP", "Construction"], ["HINDPETRO", "Oil - Gas"], ["IONEXCHANG", "Water Treatment"], ["IPCALAB", "Pharma"], ["IRB", "Engineering - Construction"], ["JIOFIN", "Finance - Housing - NBFC"], ["JKTYRE", "Tyres"], ["JPPOWER", "Power"], ["JWL", "Railway"], ["KAJARIACER", "Ceramics"], ["KANSAINER", "Paints - Pigments"], ["LALPATHLAB", "Hospital - Healthcare Services"], ["LATENTVIEW", "Trading"], ["LICI", "Insurance"], ["LTTS", "IT - Software"], ["MANKIND", "Pharma"], ["MAZDOCK", "Ship - Ship Building"], ["METROPOLIS", "Hospital - Healthcare Services"], ["MRF", "Tyres"], ["NETWORK18", "Media"], ["NFL", "Fertilizers - Pesticides"], ["NH", "Hospital - Healthcare Services"], ["OPTIEMUS", "Trading"], ["PCJEWELLER", "Diamond - Jewellery"], ["PGEL", "Consumer Durables"], ["PHOENIXLTD", "Construction"], ["POWERINDIA", "Electric Equipments"], ["RAILTEL", "Telecommunication"], ["REDTAPE", "Retail"], ["RVNL", "Engineering - Construction"], ["SAGILITY", "Trading"], ["SAMMAANCAP", "Finance - Housing - NBFC"], ["SCHAEFFLER", "Bearings"], ["SHAILY", "Plastic"], ["SJVN", "Power"], ["SMARTWORKS", "Trading"], ["SOBHA", "Construction"], ["SONACOMS", "Auto Ancillary"], ["SUBROS", "Auto Ancillary"], ["SUDARSCHEM", "Chemicals - Dyes - Pigments"], ["SUMICHEM", "Fertilizers - Pesticides"], ["SUNPHARMA", "Pharma"], ["SUNTECK", "Construction"], ["SUNTV", "Media"], ["TANLA", "IT - Software"], ["TATACHEM", "Chemicals"], ["TECHNOE", "Engineering - Construction"], ["ACC", "Cement"], ["ACMESOLAR", "Power"], ["ADANIENSOL", "Power"], ["ALOKINDS", "Textile"], ["APLAPOLLO", "Metals - Steel - Iron Products"], ["APLLTD", "Pharma"], ["ARE&M", "Batteries"], ["BAJAJHLDNG", "Finance - Housing - NBFC"], ["BIRLACORPN", "Cement"], ["CCL", "Tea - Coffee"], ["CEMPRO", "Engineering - Construction"], ["CIPLA", "Pharma"], ["CUMMINSIND", "Engg - Industrial Equipments"], ["DIVISLAB", "Pharma"], ["DYNAMATECH", "Engg - Industrial Equipments"], ["ECLERX", "IT - BPO - ITeS"], ["EIHOTEL", "Hotels"], ["EMIL", "Retail"], ["ETHOSLTD", "Retail"], ["FINPIPE", "Plastic"], ["GMRP&UI", "Power"], ["GOKEX", "Textile"], ["GRAPHITE", "Manufacturing"], ["GSFC", "Fertilizers - Pesticides"], ["HDBFS", "Finance - Housing - NBFC"], ["HGINFRA", "Engineering - Construction"], ["HUDCO", "Finance - Housing - NBFC"], ["ICICIAMC", "-"], ["IMFA", "Metals"], ["IRFC", "Finance - Housing - NBFC"], ["JAINREC", "Metals - Non Ferrous"], ["JLHL", "Hospital - Healthcare Services"], ["KNRCON", "Engineering - Construction"], ["KPIGREEN", "Engineering - Construction"], ["KSCL", "Agriculture"], ["LAURUSLABS", "Pharma"], ["LINDEINDIA", "Chemicals"], ["LUMAXTECH", "Auto Ancillary"], ["MANYAVAR", "Textile"], ["MGL", "Oil - Gas"], ["MUTHOOTFIN", "Finance - Housing - NBFC"], ["NEWGEN", "IT - Software"], ["NLCINDIA", "Power"], ["OBEROIRLTY", "Construction"], ["ORIENTCEM", "Cement"], ["RENUKA", "Sugar"], ["RITES", "Engineering"], ["RPOWER", "Power"], ["SAFARI", "FMCG"], ["SBICARD", "Finance - Housing - NBFC"], ["SENCO", "Diamond - Jewellery"], ["SHREECEM", "Cement"], ["SWIGGY", "Retail"], ["AARTIDRUGS", "Pharma"], ["AARTIIND", "Chemicals"], ["ABFRL", "Retail"], ["ABLBL", "Retail"], ["ASTRAL", "Plastic"], ["ATLANTAELE", "Electric Equipments"], ["BAJAJFINSV", "Finance - Investment - Management"], ["BAJAJHFL", "Finance - Housing - NBFC"], ["BALUFORGE", "Engg - Industrial Equipments"], ["BATAINDIA", "Footwear"], ["BHEL", "Engg - Industrial Equipments"], ["BLUEDART", "Logistics"], ["BLUESTARCO", "Consumer Durables"], ["BLUESTONE", "Diamond - Jewellery"], ["BRITANNIA", "Food"], ["CAMPUS", "Footwear"], ["CANHLIFE", "Insurance"], ["CLEAN", "Chemicals"], ["COHANCE", "Pharma"], ["CONCOR", "Logistics"], ["DCMSHRIRAM", "Trading"], ["DEEPAKNTR", "Chemicals"], ["DELHIVERY", "Logistics"], ["DRREDDY", "Pharma"], ["ETERNAL", "Retail"], ["GPIL", "Metals - Steel - Iron Products"], ["HDFCAMC", "Finance - Investment - Management"], ["HEG", "Manufacturing"], ["IEX", "Power"], ["INDUSTOWER", "Telecommunication"], ["IOB", "Banks"], ["IREDA", "Finance - Housing - NBFC"], ["ITC", "Tobacco - Alcohol"], ["ITCHOTELS", "Hotels"], ["JINDALSTEL", "Metals - Steel - Iron Products"], ["KALYANKJIL", "Diamond - Jewellery"], ["M&M", "Auto"], ["MAHSCOOTER", "Finance - Investment - Management"], ["MOIL", "Mining"], ["NHPC", "Power"], ["NUVOCO", "Cement"], ["PATANJALI", "Food"], ["PGIL", "Textile"], ["PICCADIL", "Tobacco - Alcohol"], ["PURVA", "Construction"], ["RELIANCE", "Oil - Gas"], ["RTNPOWER", "Power"], ["SAIL", "Metals - Steel - Iron Products"], ["SCHNEIDER", "Electric Equipments"], ["STARHEALTH", "Insurance"], ["SWANCORP", "Textile"], ["ABREL", "Construction"], ["ACUTAAS", "Pharma"], ["ARVINDFASN", "Retail"], ["ASKAUTOLTD", "Auto Ancillary"], ["BAJAJELEC", "Consumer Durables"], ["BHARTIHEXA", "Telecommunication"], ["CAPILLARY", "-"], ["CASTROLIND", "Oil - Gas"], ["CHENNPETRO", "Oil - Gas"], ["COCHINSHIP", "Ship - Ship Building"], ["DABUR", "FMCG"], ["DALBHARAT", "Cement"], ["ELECTCAST", "Metals - Steel - Iron Products"], ["EMAMILTD", "FMCG"], ["GLENMARK", "Pharma"], ["GODIGIT", "Insurance"], ["GODREJAGRO", "Agriculture"], ["GPPL", "Infrastructure"], ["HAPPSTMNDS", "IT - Software"], ["HAVELLS", "Electric Equipments"], ["HCG", "Hospital - Healthcare Services"], ["HINDCOPPER", "Metals - Non Ferrous"], ["HINDZINC", "Metals - Non Ferrous"], ["IRCTC", "Travel"], ["JKCEMENT", "Cement"], ["JKPAPER", "Paper - Printing"], ["KAYNES", "IT - Hardware"], ["KPITTECH", "IT - Software"], ["LOTUSDEV", "Construction"], ["MAPMYINDIA", "IT - Software"], ["MEESHO", "-"], ["MPHASIS", "IT - Software"], ["NATCOPHARM", "Pharma"], ["NAUKRI", "IT - BPO - ITeS"], ["PARKHOSPS", "-"], ["PFC", "Finance - Housing - NBFC"], ["PFIZER", "Pharma"], ["PNCINFRA", "Engineering - Construction"], ["PPLPHARMA", "Pharma"], ["RALLIS", "Fertilizers - Pesticides"], ["SKFINDIA", "Bearings"], ["TENNIND", "-"], ["3MINDIA", "Trading"], ["ABB", "Electric Equipments"], ["ADANIENT", "Trading"], ["AIAENG", "Forgings"], ["AMBER", "Consumer Durables"], ["BEL", "Defence"], ["CELLO", "Trading"], ["CRISIL", "Finance - Investment - Management"], ["DEVYANI", "Food"], ["EIDPARRY", "Sugar"], ["ENDURANCE", "Auto Ancillary"], ["ENTERO", "Trading"], ["FIRSTCRY", "Retail"], ["GHCL", "Chemicals"], ["GMMPFAUDLR", "Engg - Industrial Equipments"], ["HERITGFOOD", "Food"], ["INDGN", "Trading"], ["JAIBALAJI", "Metals - Steel - Iron Products"], ["JKLAKSHMI", "Cement"], ["JSWENERGY", "Power"], ["JUBLFOOD", "Food"], ["JUBLINGREA", "Chemicals"], ["JYOTHYLAB", "FMCG"], ["KFINTECH", "Finance - Investment - Management"], ["LEMONTREE", "Hotels"], ["LENSKART", "Trading"], ["MFSL", "Finance - Investment - Management"], ["NATIONALUM", "Metals - Non Ferrous"], ["NAVA", "Power"], ["NESTLEIND", "Food"], ["PNGJL", "Retail"], ["PRAJIND", "Engg - Industrial Equipments"], ["PREMIERENE", "IT - Hardware"], ["PRICOLLTD", "Auto Ancillary"], ["SANOFICONR", "Pharma"], ["SAPPHIRE", "Food"], ["STYRENIX", "Chemicals"], ["TARC", "Construction"], ["TCS", "IT - Software"], ["AFFLE", "IT - BPO - ITeS"], ["BAJAJ-AUTO", "Auto"], ["BALKRISIND", "Tyres"], ["BSOFT", "IT - Software"], ["CCAVENUE", "-"], ["COALINDIA", "Mining"], ["CROMPTON", "Consumer Durables"], ["ESCORTS", "Auto"], ["EUREKAFORB", "Consumer Durables"], ["FSL", "IT - BPO - ITeS"], ["GESHIP", "Ship - Ship Building"], ["GICRE", "Insurance"], ["GILLETTE", "FMCG"], ["HAL", "Defence"], ["HDFCLIFE", "Insurance"], ["HEXT", "IT - Software"], ["ICICIPRULI", "Insurance"], ["KITEX", "Textile"], ["LGEINDIA", "Consumer Durables"], ["MSUMI", "Auto Ancillary"], ["NTPCGREEN", "Power"], ["OFSS", "IT - Software"], ["PVRINOX", "Media"], ["RHIM", "Metals"], ["SARDAEN", "Metals - Steel - Iron Products"], ["SBFC", "Finance - Housing - NBFC"], ["SIEMENS", "Electric Equipments"], ["SUPREMEIND", "Plastic"], ["TATAELXSI", "IT - Software"], ["AGARWALEYE", "Hospital - Healthcare Services"], ["ALKEM", "Pharma"], ["CHALET", "Hotels"], ["CRIZAC", "Digital India"], ["GLAXO", "Pharma"], ["HINDALCO", "Metals - Non Ferrous"], ["NESCO", "Engg - Industrial Equipments"], ["NTPC", "Power"], ["ONESOURCE", "Pharma"], ["ORKLAINDIA", "Food"], ["PRSMJOHNSN", "Cement"], ["SOLARINDS", "Chemicals"], ["SONATSOFTW", "IT - Software"], ["TATAPOWER", "Power"], ["TATASTEEL", "Metals - Steel - Iron Products"], ["ANURAS", "Chemicals"], ["ATUL", "Chemicals"], ["CENTURYPLY", "Manufacturing"], ["CESC", "Power"], ["COFORGE", "IT - Software"], ["DMART", "Retail"], ["ICICIGI", "Insurance"], ["INFY", "IT - Software"], ["MASTEK", "IT - Software"], ["OIL", "Oil - Gas"], ["ONGC", "Oil - Gas"], ["PERSISTENT", "IT - Software"], ["POWERGRID", "Power"], ["SIGNATURE", "Construction"], ["TATACONSUM", "Tea - Coffee"], ["TECHM", "IT - Software"], ["BAYERCROP", "Fertilizers - Pesticides"], ["HCLTECH", "IT - Software"], ["LTM", "-"], ["SBILIFE", "Insurance"], ["TIINDIA", "Auto Ancillary"], ["TIMETECHNO", "Plastic"], ["TIMKEN", "Bearings"], ["TIPSMUSIC", "Media"], ["TITAGARH", "Railway"], ["TITAN", "Diamond - Jewellery"], ["TMB", "Banks"], ["TMCV", "Auto"], ["TMPV", "Auto"], ["TORNTPHARM", "Pharma"], ["TORNTPOWER", "Power"], ["TRANSRAILL", "Electric Equipments"], ["TRAVELFOOD", "Hotels"], ["TRENT", "Retail"], ["TRIDENT", "Textile - Spinning - Weaving"], ["TRITURBINE", "Engg - Industrial Equipments"], ["TRIVENI", "Sugar"], ["TSFINV", "Finance - Investment - Management"], ["TTML", "Telecommunication"], ["TVSMOTOR", "Auto"], ["TVSSCS", "Logistics"], ["UBL", "Tobacco - Alcohol"], ["UCOBANK", "Banks"], ["UJJIVANSFB", "Banks"], ["ULTRACEMCO", "Cement"], ["UNIONBANK", "Banks"], ["UNITDSPR", "Tobacco - Alcohol"], ["UNOMINDA", "Auto Ancillary"], ["UPL", "Fertilizers - Pesticides"], ["URBANCO", "Trading"], ["USHAMART", "Metals - Steel - Iron Products"], ["UTIAMC", "Finance - Investment - Management"], ["UTLSOLAR", "-"], ["V2RETAIL", "Retail"], ["VAIBHAVGBL", "Diamond - Jewellery"], ["VARROC", "Auto Ancillary"], ["VBL", "Food"], ["VEDL", "Metals - Non Ferrous"], ["VGUARD", "Electric Equipments"], ["VIJAYA", "Hospital - Healthcare Services"], ["VIKRAMSOLR", "IT - Hardware"], ["VIPIND", "FMCG"], ["VIYASH", "-"], ["VMART", "Retail"], ["VMM", "Retail"], ["VOLTAMP", "Electric Equipments"], ["VOLTAS", "Consumer Durables"], ["VTL", "Textile"], ["WAAREEENER", "Electric Equipments"], ["WAAREERTL", "Power"], ["WABAG", "Water Treatment"], ["WAKEFIT", "-"], ["WEBELSOLAR", "IT - Hardware"], ["WELCORP", "Metals - Steel - Iron Products"], ["WELENT", "Construction"], ["WELSPUNLIV", "Textile"], ["WESTLIFE", "Hotels"], ["WEWORK", "Trading"], ["WHIRLPOOL", "Consumer Durables"], ["WIPRO", "IT - Software"], ["WOCKPHARMA", "Pharma"], ["YATHARTH", "Hospital - Healthcare Services"], ["YESBANK", "Banks"], ["ZAGGLE", "IT - Software"], ["ZEEL", "Media"], ["ZENSARTECH", "IT - Software"], ["ZENTEC", "Defence"], ["ZFCVINDIA", "Auto Ancillary"], ["ZYDUSLIFE", "Pharma"], ["ZYDUSWELL", "Food"]
 ];
 
-// NIFTY 50 / 100 / 200 subsets (by index in ALL_STOCKS)
-const NIFTY50_SYMS  = ALL_STOCKS.slice(0,50).map(s=>s[0]);
-const NIFTY100_SYMS = ALL_STOCKS.slice(0,100).map(s=>s[0]);
-const NIFTY200_SYMS = ALL_STOCKS.slice(0,200).map(s=>s[0]);
-const LIQUID_SYMS   = ALL_STOCKS.map(s=>s[0]);
-const SECTOR_MAP    = Object.fromEntries(ALL_STOCKS.map(s=>[s[0],s[1]]));
+const NIFTY50_SYMS = ["ASIANPAINT", "KOTAKBANK", "ADANIPORTS", "AXISBANK", "ICICIBANK", "INDIGO", "EICHERMOT", "JSWSTEEL", "MAXHEALTH", "SBIN", "SHRIRAMFIN", "BAJFINANCE", "GRASIM", "MARUTI", "SUNPHARMA", "CIPLA", "BAJAJFINSV", "DRREDDY", "ITC", "M&M", "RELIANCE", "BHARTIARTL", "JIOFIN", "ADANIENT", "BEL", "TCS", "BAJAJ-AUTO", "COALINDIA", "HDFCLIFE", "HINDALCO", "NTPC", "TATAPOWER", "TATASTEEL", "INFY", "POWERGRID", "TATACONSUM", "TECHM", "HCLTECH", "SBILIFE", "TITAN", "TMPV", "TRENT", "ULTRACEMCO", "WIPRO"];
+const NIFTY100_SYMS = ["ASIANPAINT", "KOTAKBANK", "ADANIPORTS", "AXISBANK", "ICICIBANK", "INDIGO", "EICHERMOT", "JSWSTEEL", "MAXHEALTH", "SBIN", "SHRIRAMFIN", "BAJFINANCE", "GRASIM", "MARUTI", "SUNPHARMA", "CIPLA", "BAJAJFINSV", "DRREDDY", "ITC", "M&M", "RELIANCE", "BHARTIARTL", "JIOFIN", "ADANIENT", "BEL", "TCS", "BAJAJ-AUTO", "COALINDIA", "HDFCLIFE", "HINDALCO", "NTPC", "TATAPOWER", "TATASTEEL", "INFY", "POWERGRID", "TATACONSUM", "TECHM", "HCLTECH", "SBILIFE", "TITAN", "TMPV", "TRENT", "ULTRACEMCO", "WIPRO", "BOSCHLTD", "PIDILITIND", "GAIL", "MOTHERSON", "BANKBARODA", "CHOLAFIN", "HYUNDAI", "PNB", "RECLTD", "BPCL", "CGPOWER", "ENRIN", "IOC", "ADANIGREEN", "CANBK", "DLF", "GODREJCP", "LODHA", "ADANIPOWER", "AMBUJACEM", "LICI", "MAZDOCK", "ADANIENSOL", "BAJAJHLDNG", "DIVISLAB", "IRFC", "SHREECEM", "JINDALSTEL", "HAVELLS", "HINDZINC", "NAUKRI", "PFC", "ABB", "JSWENERGY", "SIEMENS", "SOLARINDS", "DMART", "ICICIGI", "TORNTPHARM", "UNITDSPR", "VBL", "VEDL", "ZYDUSLIFE"];
+const NIFTY500_SYMS = ["ASIANPAINT", "KOTAKBANK", "ADANIPORTS", "AXISBANK", "ICICIBANK", "INDIGO", "EICHERMOT", "JSWSTEEL", "MAXHEALTH", "SBIN", "SHRIRAMFIN", "BAJFINANCE", "GRASIM", "MARUTI", "SUNPHARMA", "CIPLA", "BAJAJFINSV", "DRREDDY", "ITC", "M&M", "RELIANCE", "BHARTIARTL", "JIOFIN", "ADANIENT", "BEL", "TCS", "BAJAJ-AUTO", "COALINDIA", "HDFCLIFE", "HINDALCO", "NTPC", "TATAPOWER", "TATASTEEL", "INFY", "POWERGRID", "TATACONSUM", "TECHM", "HCLTECH", "SBILIFE", "TITAN", "TMPV", "TRENT", "ULTRACEMCO", "WIPRO", "BOSCHLTD", "PIDILITIND", "GAIL", "MOTHERSON", "BANKBARODA", "CHOLAFIN", "HYUNDAI", "PNB", "RECLTD", "BPCL", "CGPOWER", "ENRIN", "IOC", "ADANIGREEN", "CANBK", "DLF", "GODREJCP", "LODHA", "ADANIPOWER", "AMBUJACEM", "LICI", "MAZDOCK", "ADANIENSOL", "BAJAJHLDNG", "DIVISLAB", "IRFC", "SHREECEM", "JINDALSTEL", "HAVELLS", "HINDZINC", "NAUKRI", "PFC", "ABB", "JSWENERGY", "SIEMENS", "SOLARINDS", "DMART", "ICICIGI", "TORNTPHARM", "UNITDSPR", "VBL", "VEDL", "ZYDUSLIFE", "APARINDS", "FEDERALBNK", "MAHABANK", "GMRAIRPORT", "HONAUT", "IDEA", "IDFCFIRSTB", "JSWINFRA", "AJANTPHARM", "AUBANK", "COROMANDEL", "FORTIS", "KEI", "MOTILALOFS", "NYKAA", "PAGEIND", "AUROPHARMA", "BANKINDIA", "IDBI", "INDIANB", "MEDANTA", "NAM-INDIA", "SRF", "TATATECH", "360ONE", "ABCAPITAL", "APOLLOTYRE", "BHARATFORG", "DIXON", "GVT&D", "KPRMILL", "LICHSGFIN", "LLOYDSME", "M&MFIN", "NIACL", "POLYCAB", "ASHOKLEY", "BERGEPAINT", "BSE", "EXIDEIND", "FACT", "FLUOROCHEM", "GODFRYPHLP", "HEROMOTOCO", "IGL", "JSL", "MARICO", "PIIND", "PRESTIGE", "SUZLON", "THERMAX", "BIOCON", "COLPAL", "INDUSINDBK", "LTF", "LUPIN", "NMDC", "PAYTM", "PETRONET", "POLICYBZR", "SUNDARMFIN", "TATAINVEST", "ABBOTINDIA", "ATGL", "AWL", "BDL", "IRB", "LTTS", "MANKIND", "MRF", "PHOENIXLTD", "POWERINDIA", "RVNL", "SCHAEFFLER", "SJVN", "SONACOMS", "ACC", "APLAPOLLO", "CUMMINSIND", "DALBHARAT", "HUDCO", "LINDEINDIA", "MUTHOOTFIN", "NLCINDIA", "OBEROIRLTY", "SBICARD", "SWIGGY", "ASTRAL", "BHEL", "BLUESTARCO", "CONCOR", "DEEPAKNTR", "HDFCAMC", "INDUSTOWER", "IOB", "IREDA", "ITCHOTELS", "NHPC", "PATANJALI", "SAIL", "BHARTIHEXA", "COCHINSHIP", "DABUR", "GLENMARK", "IRCTC", "JKCEMENT", "KPITTECH", "MPHASIS", "3MINDIA", "AIAENG", "CRISIL", "ENDURANCE", "PREMIERENE", "BALKRISIND", "ESCORTS", "GICRE", "HEXT", "ICICIPRULI", "NTPCGREEN", "OFSS", "SUPREMEIND", "TATAELXSI", "ALKEM", "GLAXO", "COFORGE", "OIL", "PERSISTENT", "TIINDIA", "TORNTPOWER", "UBL", "UCOBANK", "UNIONBANK", "UNOMINDA", "UPL", "VOLTAS", "WAAREEENER", "YESBANK", "AKUMS", "CAPLIPOINT", "CERA", "CGCL", "IFCI", "J&KBANK", "NAVINFLUOR", "NUVAMA", "PIRAMALFIN", "RBLBANK", "SAILIFE", "SYRMA", "TEJASNET", "ABSLAMC", "ACE", "AEGISLOG", "AEGISVOPAK", "AIIL", "APTUS", "ASTERDM", "BLUEJET", "CHAMBLFERT", "CONCORDBIO", "DEEPAKFERT", "ELECON", "JBCHEPHARM", "KIRLOSBROS", "NBCC", "NETWEB", "TBOTEK", "AAVAS", "ALKYLAMINE", "HOMEFIRST", "INTELLECT", "JBMA", "KPIL", "KSB", "MMTC", "NEULANDLAB", "RKFORGE", "THELEELA", "AADHARHFC", "ATHERENERG", "BIKAJI", "CUB", "HONASA", "HSCL", "JYOTICNC", "KIMS", "KIRLOSENG", "OLECTRA", "POLYMED", "PTCIL", "SHYAMMETL", "ANGELONE", "BANDHANBNK", "CANFINHOME", "CARBORUNIV", "CEATLTD", "CHOLAHLDNG", "CREDITACC", "DOMS", "ELGIEQUIP", "EMCURE", "ERIS", "IGIL", "IKS", "ITI", "JUBLPHARMA", "KARURVYSYA", "MAHSEAMLES", "MINDACORP", "NIVABUPA", "RADICO", "RRKABEL", "SAREGAMA", "ANANDRATHI", "BRIGADE", "CRAFTSMAN", "ENGINERSIN", "GLAND", "INOXWIND", "KEC", "MANAPPURAM", "NSLNISP", "OLAELEC", "PCBL", "POONAWALLA", "RAINBOW", "RCF", "REDINGTON", "SCI", "ANANTRAJ", "BALRAMCHIN", "BLS", "CAMS", "DBREALTY", "FINCABLES", "GRANULES", "GRAVITA", "INDIACEM", "INDIAMART", "INOXINDIA", "IRCON", "JINDALSAW", "JMFINANCIL", "LTFOODS", "MCX", "NCC", "PNBHOUSING", "RAMCOCEM", "TARIL", "AFCONS", "ASAHIINDIA", "BBTC", "BEML", "CDSL", "CHOICEIN", "CYIENT", "FIVESTAR", "FORCEMOT", "GMDCLTD", "GRSE", "HBLENGINE", "JKTYRE", "JPPOWER", "JWL", "KAJARIACER", "LALPATHLAB", "LATENTVIEW", "METROPOLIS", "NH", "PGEL", "RAILTEL", "SAGILITY", "SAMMAANCAP", "SOBHA", "SUMICHEM", "SUNTV", "TATACHEM", "TECHNOE", "ACMESOLAR", "ALOKINDS", "APLLTD", "ARE&M", "CCL", "ECLERX", "EIHOTEL", "FINPIPE", "GRAPHITE", "LAURUSLABS", "MANYAVAR", "MGL", "NEWGEN", "RITES", "RPOWER", "AARTIIND", "ABFRL", "ABLBL", "BATAINDIA", "BLUEDART", "CAMPUS", "CLEAN", "COHANCE", "DCMSHRIRAM", "DELHIVERY", "GPIL", "HEG", "IEX", "MAHSCOOTER", "NUVOCO", "SCHNEIDER", "STARHEALTH", "SWANCORP", "ABREL", "CASTROLIND", "CHENNPETRO", "EMAMILTD", "GODIGIT", "GODREJAGRO", "HAPPSTMNDS", "HINDCOPPER", "KAYNES", "MAPMYINDIA", "NATCOPHARM", "PFIZER", "PPLPHARMA", "SKFINDIA", "AMBER", "DEVYANI", "EIDPARRY", "FIRSTCRY", "INDGN", "JUBLINGREA", "JYOTHYLAB", "KFINTECH", "LEMONTREE", "NAVA", "PRAJIND", "SAPPHIRE", "AFFLE", "BSOFT", "CROMPTON", "FSL", "GESHIP", "GILLETTE", "MSUMI", "PVRINOX", "RHIM", "SARDAEN", "SBFC", "CHALET", "ONESOURCE", "SONATSOFTW", "ATUL", "CENTURYPLY", "CESC", "SIGNATURE", "BAYERCROP", "TIMKEN", "TITAGARH", "TRIDENT", "TRITURBINE", "TRIVENI", "TTML", "USHAMART", "UTIAMC", "VGUARD", "VIJAYA", "VTL", "WELCORP", "WELSPUNLIV", "WHIRLPOOL", "WOCKPHARMA", "ZEEL", "ZENSARTECH", "ZENTEC", "ZFCVINDIA"];
+const MIDCAP150_SYMS = ["APARINDS", "FEDERALBNK", "MAHABANK", "GMRAIRPORT", "HONAUT", "IDEA", "IDFCFIRSTB", "JSWINFRA", "AJANTPHARM", "AUBANK", "COROMANDEL", "FORTIS", "KEI", "MOTILALOFS", "NYKAA", "PAGEIND", "AUROPHARMA", "BANKINDIA", "IDBI", "INDIANB", "MEDANTA", "NAM-INDIA", "SRF", "TATATECH", "360ONE", "ABCAPITAL", "APOLLOTYRE", "BHARATFORG", "DIXON", "GVT&D", "KPRMILL", "LICHSGFIN", "LLOYDSME", "M&MFIN", "NIACL", "POLYCAB", "ASHOKLEY", "BERGEPAINT", "BSE", "EXIDEIND", "FACT", "FLUOROCHEM", "GODFRYPHLP", "HEROMOTOCO", "IGL", "JSL", "MARICO", "PIIND", "PRESTIGE", "SUZLON", "THERMAX", "BIOCON", "COLPAL", "INDUSINDBK", "LTF", "LUPIN", "NMDC", "PAYTM", "PETRONET", "POLICYBZR", "SUNDARMFIN", "TATAINVEST", "ABBOTINDIA", "ATGL", "AWL", "BDL", "IRB", "LTTS", "MANKIND", "MRF", "PHOENIXLTD", "POWERINDIA", "RVNL", "SCHAEFFLER", "SJVN", "SONACOMS", "ACC", "APLAPOLLO", "CUMMINSIND", "DALBHARAT", "HUDCO", "LINDEINDIA", "MUTHOOTFIN", "NLCINDIA", "OBEROIRLTY", "SBICARD", "SWIGGY", "ASTRAL", "BHEL", "BLUESTARCO", "CONCOR", "DEEPAKNTR", "HDFCAMC", "INDUSTOWER", "IOB", "IREDA", "ITCHOTELS", "NHPC", "PATANJALI", "SAIL", "BHARTIHEXA", "COCHINSHIP", "DABUR", "GLENMARK", "IRCTC", "JKCEMENT", "KPITTECH", "MPHASIS", "3MINDIA", "AIAENG", "CRISIL", "ENDURANCE", "PREMIERENE", "BALKRISIND", "ESCORTS", "GICRE", "HEXT", "ICICIPRULI", "NTPCGREEN", "OFSS", "SUPREMEIND", "TATAELXSI", "ALKEM", "GLAXO", "COFORGE", "OIL", "PERSISTENT", "TIINDIA", "TORNTPOWER", "UBL", "UCOBANK", "UNIONBANK", "UNOMINDA", "UPL", "VOLTAS", "WAAREEENER", "YESBANK"];
+const SMALLCAP250_SYMS = ["AKUMS", "CAPLIPOINT", "CERA", "CGCL", "IFCI", "J&KBANK", "NAVINFLUOR", "NUVAMA", "PIRAMALFIN", "RBLBANK", "SAILIFE", "SYRMA", "TEJASNET", "ABSLAMC", "ACE", "AEGISLOG", "AEGISVOPAK", "AIIL", "APTUS", "ASTERDM", "BLUEJET", "CHAMBLFERT", "CONCORDBIO", "DEEPAKFERT", "ELECON", "JBCHEPHARM", "KIRLOSBROS", "NBCC", "NETWEB", "TBOTEK", "AAVAS", "ALKYLAMINE", "HOMEFIRST", "INTELLECT", "JBMA", "KPIL", "KSB", "MMTC", "NEULANDLAB", "RKFORGE", "THELEELA", "AADHARHFC", "ATHERENERG", "BIKAJI", "CUB", "HONASA", "HSCL", "JYOTICNC", "KIMS", "KIRLOSENG", "OLECTRA", "POLYMED", "PTCIL", "SHYAMMETL", "ANGELONE", "BANDHANBNK", "CANFINHOME", "CARBORUNIV", "CEATLTD", "CHOLAHLDNG", "CREDITACC", "DOMS", "ELGIEQUIP", "EMCURE", "ERIS", "IGIL", "IKS", "ITI", "JUBLPHARMA", "KARURVYSYA", "MAHSEAMLES", "MINDACORP", "NIVABUPA", "RADICO", "RRKABEL", "SAREGAMA", "ANANDRATHI", "BRIGADE", "CRAFTSMAN", "ENGINERSIN", "GLAND", "INOXWIND", "KEC", "MANAPPURAM", "NSLNISP", "OLAELEC", "PCBL", "POONAWALLA", "RAINBOW", "RCF", "REDINGTON", "SCI", "ANANTRAJ", "BALRAMCHIN", "BLS", "CAMS", "DBREALTY", "FINCABLES", "GRANULES", "GRAVITA", "INDIACEM", "INDIAMART", "INOXINDIA", "IRCON", "JINDALSAW", "JMFINANCIL", "LTFOODS", "MCX", "NCC", "PNBHOUSING", "RAMCOCEM", "TARIL", "AFCONS", "ASAHIINDIA", "BBTC", "BEML", "CDSL", "CHOICEIN", "CYIENT", "FIVESTAR", "FORCEMOT", "GMDCLTD", "GRSE", "HBLENGINE", "JKTYRE", "JPPOWER", "JWL", "KAJARIACER", "LALPATHLAB", "LATENTVIEW", "METROPOLIS", "NH", "PGEL", "RAILTEL", "SAGILITY", "SAMMAANCAP", "SOBHA", "SUMICHEM", "SUNTV", "TATACHEM", "TECHNOE", "ACMESOLAR", "ALOKINDS", "APLLTD", "ARE&M", "CCL", "ECLERX", "EIHOTEL", "FINPIPE", "GRAPHITE", "LAURUSLABS", "MANYAVAR", "MGL", "NEWGEN", "RITES", "RPOWER", "AARTIIND", "ABFRL", "ABLBL", "BATAINDIA", "BLUEDART", "CAMPUS", "CLEAN", "COHANCE", "DCMSHRIRAM", "DELHIVERY", "GPIL", "HEG", "IEX", "MAHSCOOTER", "NUVOCO", "SCHNEIDER", "STARHEALTH", "SWANCORP", "ABREL", "CASTROLIND", "CHENNPETRO", "EMAMILTD", "GODIGIT", "GODREJAGRO", "HAPPSTMNDS", "HINDCOPPER", "KAYNES", "MAPMYINDIA", "NATCOPHARM", "PFIZER", "PPLPHARMA", "SKFINDIA", "AMBER", "DEVYANI", "EIDPARRY", "FIRSTCRY", "INDGN", "JUBLINGREA", "JYOTHYLAB", "KFINTECH", "LEMONTREE", "NAVA", "PRAJIND", "SAPPHIRE", "AFFLE", "BSOFT", "CROMPTON", "FSL", "GESHIP", "GILLETTE", "MSUMI", "PVRINOX", "RHIM", "SARDAEN", "SBFC", "CHALET", "ONESOURCE", "SONATSOFTW", "ATUL", "CENTURYPLY", "CESC", "SIGNATURE", "BAYERCROP", "TIMKEN", "TITAGARH", "TRIDENT", "TRITURBINE", "TRIVENI", "TTML", "USHAMART", "UTIAMC", "VGUARD", "VIJAYA", "VTL", "WELCORP", "WELSPUNLIV", "WHIRLPOOL", "WOCKPHARMA", "ZEEL", "ZENSARTECH", "ZENTEC", "ZFCVINDIA"];
+const LIQUID_SYMS = ALL_STOCKS.map(s => s[0]);
 
-const SECTORS = ['BANK','IT','PHARMA','AUTO','METAL','ENERGY','FMCG','INFRA','REALTY','MEDIA','CHEM','TEXTILE'];
-const SECTOR_COLORS = {
-  BANK:'#3b82f6',IT:'#06b6d4',PHARMA:'#22c55e',AUTO:'#f59e0b',METAL:'#94a3b8',
-  ENERGY:'#f97316',FMCG:'#ec4899',INFRA:'#84cc16',REALTY:'#a855f7',
-  MEDIA:'#14b8a6',CHEM:'#eab308',TEXTILE:'#fb923c'
-};
+const SECTOR_MAP = Object.fromEntries(ALL_STOCKS.map(s=>[s[0],s[1]]));
+const UNIQUE_SECTORS = [...new Set(ALL_STOCKS.map(s => s[1]).filter(s => s !== "-"))].sort();
+
+// Some simple distinct colors for dynamic sectors
+const DEFAULT_COLORS = ['#3b82f6','#06b6d4','#22c55e','#f59e0b','#94a3b8','#f97316','#ec4899','#84cc16','#a855f7','#14b8a6','#eab308','#fb923c','#ef4444','#6366f1','#8b5cf6'];
+const SECTOR_COLORS = {};
+UNIQUE_SECTORS.forEach((sec, i) => { SECTOR_COLORS[sec] = DEFAULT_COLORS[i % DEFAULT_COLORS.length]; });
+
+// Build dynamic sector dropdowns and chips
+const secFilterDropdown = document.getElementById('sectorFilter');
+const secResultDropdown = document.getElementById('sectorResultFilter');
+const chipRow = document.getElementById('sectorChips');
+
+// Populate dropdowns
+UNIQUE_SECTORS.forEach(s => {
+  let opt1 = document.createElement('option'); opt1.value = s; opt1.textContent = s; secFilterDropdown.appendChild(opt1);
+  let opt2 = document.createElement('option'); opt2.value = s; opt2.textContent = s; secResultDropdown.appendChild(opt2);
+});
 
 // Build sector chips
-const chipRow = document.getElementById('sectorChips');
 const allChip = document.createElement('span');
 allChip.className='schip active'; allChip.textContent='All';
 allChip.onclick=()=>{ document.getElementById('sectorFilter').value='all'; updateCount(); chipRow.querySelectorAll('.schip').forEach(c=>c.classList.remove('active')); allChip.classList.add('active'); };
 chipRow.appendChild(allChip);
-SECTORS.forEach(s=>{
+UNIQUE_SECTORS.forEach(s=>{
   const chip=document.createElement('span');
   chip.className='schip'; chip.textContent=s;
   chip.style.setProperty('--sc',SECTOR_COLORS[s]||'#5a6480');
@@ -496,7 +316,9 @@ function getFilteredSyms() {
   let base;
   if (uni==='nifty50') base=NIFTY50_SYMS;
   else if (uni==='nifty100') base=NIFTY100_SYMS;
-  else if (uni==='nifty200') base=NIFTY200_SYMS;
+  else if (uni==='nifty500') base=NIFTY500_SYMS;
+  else if (uni==='midcap150') base=MIDCAP150_SYMS;
+  else if (uni==='smallcap250') base=SMALLCAP250_SYMS;
   else base=LIQUID_SYMS;
   if (sec!=='all') base=base.filter(s=>SECTOR_MAP[s]===sec);
   return [...new Set(base)]; // dedupe
@@ -504,8 +326,10 @@ function getFilteredSyms() {
 
 function updateCount() {
   const syms=getFilteredSyms();
-  document.getElementById('stockCount').textContent=`${syms.length} stocks · 2L+ daily vol`;
+  document.getElementById('stockCount').textContent=`${syms.length} stocks`;
 }
+
+updateCount(); // Initial Count
 
 // ═══════════════════════════════════════════
 // MATH
@@ -677,7 +501,6 @@ async function runAll(){
     document.getElementById('progGrid').scrollTop=99999;
   };
 
-  // Process in batches of `concurrency`
   for(let i=0;i<syms.length;i+=concurrency){
     if(!scanning) break;
     const batch=syms.slice(i,i+concurrency);
@@ -703,7 +526,7 @@ async function runAll(){
   }
 
   document.getElementById('runBtn').disabled=false;
-  document.getElementById('runBtn').textContent='⚡ Screen All Stocks';
+  document.getElementById('runBtn').textContent='⚡ Screen Universe';
   document.getElementById('stopBtn').style.display='none';
   scanning=false;
   renderResults();
@@ -712,7 +535,7 @@ async function runAll(){
 function stopScan(){
   scanning=false;
   document.getElementById('runBtn').disabled=false;
-  document.getElementById('runBtn').textContent='⚡ Screen All Stocks';
+  document.getElementById('runBtn').textContent='⚡ Screen Universe';
   document.getElementById('stopBtn').style.display='none';
 }
 
@@ -729,7 +552,6 @@ function applyFilter(){
   let data=screenResults.filter(r=>r.signal!=='ERR');
   if(sf!=='all') data=data.filter(r=>r.signal===sf);
   if(sec!=='all') data=data.filter(r=>r.sector===sec);
-  // Sort BUY first by default
   data.sort((a,b)=>{
     const order={BUY:0,WATCH:1,FAIL:2};
     if(sortCol) return 0;
@@ -741,19 +563,14 @@ function applyFilter(){
 function renderTable(data){
   const body=document.getElementById('resultBody');
   if(!data.length){
-    body.innerHTML=`<tr><td colspan="14"><div class="empty"><p>No results yet or no matches for current filter.</p></div></td></tr>`;
+    body.innerHTML=`<tr><td colspan="13"><div class="empty"><p>No results yet or no matches for current filter.</p></div></td></tr>`;
     return;
   }
-  const keys=['c1','c2','c3','c4','c5','c6','c7','c8','c9','c10'];
   const maxEd=+document.getElementById('ema20dist').value;
   let rowNum=0;
   body.innerHTML=data.map(r=>{
     rowNum++;
     const sigClass={BUY:'pill-buy',WATCH:'pill-watch',FAIL:'pill-fail'}[r.signal]||'pill-fail';
-    const dots=keys.map(k=>{
-      const el=document.getElementById(k); if(!el||!el.checked)return`<span class="ck ck-off"></span>`;
-      return`<span class="ck ${r.results[k]?'ck-pass':'ck-fail'}" title="${k}:${r.results[k]?'pass':'fail'}"></span>`;
-    }).join('');
     const p=Math.min(100,(r.ema20dist/maxEd)*100);
     const bc=r.ema20dist<=maxEd?(r.aboveEma20?'var(--green)':'var(--amber)'):'var(--red)';
     const proxBar=`<div style="display:flex;align-items:center;gap:4px;"><div class="prox-bar"><div class="prox-fill" style="width:${p}%;background:${bc};"></div></div><span style="color:${bc};font-size:9px;">${r.ema20dist.toFixed(1)}%${r.aboveEma20?'↑':'↓'}</span></div>`;
@@ -767,7 +584,6 @@ function renderTable(data){
       <td style="color:#fff;">${r.close.toFixed(2)}</td>
       <td class="${r.chg>=0?'pos':'neg'}">${r.chg>=0?'+':''}${r.chg.toFixed(2)}%</td>
       <td><span class="pill ${sigClass}">${r.signal}</span></td>
-      <td>${dots}</td>
       <td>${proxBar}</td>
       <td class="neu" style="font-size:10px;">${r.ema20.toFixed(2)}</td>
       <td class="neu" style="font-size:10px;">${r.wma42.toFixed(2)}</td>
@@ -818,7 +634,7 @@ function exportCSV(){
 
 function clearAll(){
   screenResults=[];
-  document.getElementById('resultBody').innerHTML=`<tr><td colspan="14"><div class="empty"><p>Cleared.</p></div></td></tr>`;
+  document.getElementById('resultBody').innerHTML=`<tr><td colspan="13"><div class="empty"><p>Cleared.</p></div></td></tr>`;
   document.getElementById('progressCard').classList.remove('show');
   ['st-scanned','st-buy','st-watch','st-ema','st-wma','st-err'].forEach(id=>document.getElementById(id).textContent='—');
 }
