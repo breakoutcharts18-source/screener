@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>BREAKOUTCHARTS v2 — NSE Stock Screener</title>
+<title>BREAKOUTCHARTS — NSE Strategy Engine</title>
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
@@ -35,7 +35,6 @@
 html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13px;min-height:100vh;overflow-x:hidden;}
 
-/* ── SCROLLBAR ── */
 ::-webkit-scrollbar{width:5px;height:5px;}
 ::-webkit-scrollbar-track{background:var(--bg);}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px;}
@@ -104,7 +103,7 @@ select option{background:#0e1118;}
 .watch-count-badge{background:rgba(245,166,35,.12);color:var(--amber);border:1px solid rgba(245,166,35,.22);border-radius:4px;font-size:9px;font-weight:700;padding:2px 7px;cursor:pointer;transition:all .15s;}
 .watch-count-badge:hover{background:rgba(245,166,35,.2);}
 
-/* ── COND PANEL (hidden from public) ── */
+/* ── COND PANEL (hidden — internal use) ── */
 .cond-panel{display:none;}
 
 /* ── TABS ── */
@@ -137,10 +136,15 @@ td{padding:7px 10px;font-family:var(--mono);font-size:11px;white-space:nowrap;ve
 .pos{color:var(--green);}
 .neg{color:var(--red);}
 .neu{color:var(--muted);}
+
+/* ── SIGNAL PILLS ── */
 .pill{display:inline-flex;align-items:center;padding:2px 8px;border-radius:3px;font-size:8px;font-weight:800;letter-spacing:.1em;}
 .pill-buy{background:rgba(32,212,114,.1);color:var(--green);border:1px solid rgba(32,212,114,.2);}
 .pill-watch{background:rgba(245,166,35,.1);color:var(--amber);border:1px solid rgba(245,166,35,.2);}
 .pill-fail{background:rgba(240,79,79,.08);color:var(--red);border:1px solid rgba(240,79,79,.15);}
+.pill-neutral{background:rgba(72,82,114,.1);color:var(--muted);border:1px solid rgba(72,82,114,.25);}
+
+/* ── SOURCE TAGS ── */
 .src-tag{font-size:7px;padding:1px 5px;border-radius:2px;font-weight:700;letter-spacing:.06em;}
 .src-stooq{background:rgba(0,200,216,.08);color:var(--cyan);border:1px solid rgba(0,200,216,.18);}
 .src-yahoo{background:rgba(157,111,255,.08);color:var(--purple);border:1px solid rgba(157,111,255,.18);}
@@ -176,7 +180,7 @@ td{padding:7px 10px;font-family:var(--mono);font-size:11px;white-space:nowrap;ve
 .ind-badge{font-size:9px;font-family:var(--mono);display:flex;align-items:center;gap:4px;}
 .ind-dot{width:8px;height:3px;border-radius:2px;}
 
-/* ── WATCHLIST PANEL ── */
+/* ── TRACKED PANEL ── */
 .wl-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;display:none;}
 .wl-panel.show{display:block;}
 .wl-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
@@ -184,7 +188,7 @@ td{padding:7px 10px;font-family:var(--mono);font-size:11px;white-space:nowrap;ve
 .wl-chip .rm{cursor:pointer;color:var(--muted);font-size:10px;}
 .wl-chip .rm:hover{color:var(--red);}
 
-/* ── CONDITION DETAILS TOOLTIP ── */
+/* ── CRITERIA BADGES ── */
 .cond-details{display:flex;flex-wrap:wrap;gap:3px;}
 .cond-pill{font-size:7px;padding:1px 5px;border-radius:3px;font-weight:700;font-family:var(--mono);}
 .cond-pass{background:rgba(32,212,114,.1);color:var(--green);}
@@ -201,13 +205,13 @@ td{padding:7px 10px;font-family:var(--mono);font-size:11px;white-space:nowrap;ve
 
 <header>
   <div class="logo-mark">B</div>
-  <div><div class="logo-text">BREAKOUTCHARTS</div><div class="logo-sub">NSE STOCK SCREENER v2</div></div>
+  <div><div class="logo-text">BREAKOUTCHARTS</div><div class="logo-sub">NSE STRATEGY ENGINE</div></div>
   <div class="dv"></div>
-  <div class="page-title">Strategy Screener</div>
+  <div class="page-title">Technical Intelligence</div>
   <div class="hdr-right">
-    <span class="scan-time" id="scanTimeLabel">Not scanned yet</span>
-    <span style="font-size:9px;color:var(--muted);font-family:var(--mono);" id="stockCount">— stocks</span>
-    <div class="live-pill"><div class="live-dot"></div>EOD AUTO-FETCH</div>
+    <span class="scan-time" id="scanTimeLabel">Awaiting deployment</span>
+    <span style="font-size:9px;color:var(--muted);font-family:var(--mono);" id="stockCount">— securities</span>
+    <div class="live-pill"><div class="live-dot"></div>EOD LIVE FEED</div>
   </div>
 </header>
 
@@ -217,7 +221,7 @@ td{padding:7px 10px;font-family:var(--mono);font-size:11px;white-space:nowrap;ve
   <div class="top-bar">
     <div class="top-bar-row">
       <div class="ctrl-group">
-        <label>Universe</label>
+        <label>Scan Universe</label>
         <select id="universe" onchange="updateCount()" style="width:175px;">
           <option value="nifty50">Nifty 50</option>
           <option value="nifty100">Nifty 100</option>
@@ -228,13 +232,13 @@ td{padding:7px 10px;font-family:var(--mono);font-size:11px;white-space:nowrap;ve
         </select>
       </div>
       <div class="ctrl-group">
-        <label>Sector Filter</label>
+        <label>Sector Scope</label>
         <select id="sectorFilter" onchange="onSectorDropdown()" style="width:175px;">
           <option value="all">All Sectors</option>
         </select>
       </div>
       <div class="ctrl-group">
-        <label>Data Period</label>
+        <label>Lookback Window</label>
         <select id="period" style="width:145px;">
           <option value="365" selected>1 Year</option>
           <option value="548">1.5 Years</option>
@@ -242,41 +246,41 @@ td{padding:7px 10px;font-family:var(--mono);font-size:11px;white-space:nowrap;ve
         </select>
       </div>
       <div class="ctrl-group">
-        <label>Concurrent Fetches</label>
+        <label>Parallel Requests</label>
         <select id="concurrency" style="width:130px;">
-          <option value="1">1 — safe</option>
+          <option value="1">1 — conservative</option>
           <option value="2" selected>2 — balanced</option>
-          <option value="3">3 — faster</option>
+          <option value="3">3 — aggressive</option>
         </select>
       </div>
       <div style="display:flex;gap:8px;align-items:flex-end;margin-left:auto;">
-        <button class="btn-sm watch-count-badge" id="wlToggle" onclick="toggleWatchlist()">⭐ Watchlist (<span id="wlCount">0</span>)</button>
-        <button class="run-btn" id="runBtn" onclick="runAll()">⚡ Screen Universe</button>
-        <button class="stop-btn" id="stopBtn" onclick="stopScan()" style="display:none;">⏹ Stop</button>
+        <button class="btn-sm watch-count-badge" id="wlToggle" onclick="toggleWatchlist()">⭐ Tracked (<span id="wlCount">0</span>)</button>
+        <button class="run-btn" id="runBtn" onclick="runAll()">⚡ Deploy Scan</button>
+        <button class="stop-btn" id="stopBtn" onclick="stopScan()" style="display:none;">⏹ Abort</button>
       </div>
     </div>
 
     <div style="margin-top:12px;">
-      <label style="margin-bottom:6px;display:block;">Sector Quick-Select</label>
+      <label style="margin-bottom:6px;display:block;">Sector Navigation</label>
       <div class="sector-row" id="sectorChips"></div>
     </div>
   </div>
 
-  <!-- WATCHLIST PANEL -->
+  <!-- TRACKED SECURITIES PANEL -->
   <div class="wl-panel" id="wlPanel">
     <div style="display:flex;align-items:center;justify-content:space-between;">
-      <span style="font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);">⭐ Watchlist</span>
-      <button class="btn-sm" onclick="clearWatchlist()">Clear All</button>
+      <span style="font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);">⭐ Tracked Securities</span>
+      <button class="btn-sm" onclick="clearWatchlist()">Remove All</button>
     </div>
     <div class="wl-chips" id="wlChips">
-      <span style="color:var(--muted);font-size:11px;">No stocks in watchlist. Click ⭐ next to any row to add.</span>
+      <span style="color:var(--muted);font-size:11px;">No tracked securities. Flag any row with ⭐ to begin tracking.</span>
     </div>
   </div>
 
   <!-- PROGRESS -->
   <div class="progress-card" id="progressCard">
     <div class="prog-top">
-      <span class="prog-label">Scanning NSE Universe</span>
+      <span class="prog-label">Executing Universe Scan</span>
       <span class="prog-nums" id="progNums">0 / 0</span>
     </div>
     <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
@@ -285,16 +289,16 @@ td{padding:7px 10px;font-family:var(--mono);font-size:11px;white-space:nowrap;ve
 
   <!-- STATS -->
   <div class="stat-row">
-    <div class="stat-card" style="--ac:rgba(79,142,247,.08)"><div class="val" id="st-scanned">—</div><div class="lbl">Scanned</div></div>
-    <div class="stat-card" style="--ac:rgba(32,212,114,.08)"><div class="val" style="color:var(--green)" id="st-buy">—</div><div class="lbl">BUY Signal</div></div>
-    <div class="stat-card" style="--ac:rgba(245,166,35,.08)"><div class="val" style="color:var(--amber)" id="st-watch">—</div><div class="lbl">WATCH</div></div>
-    <div class="stat-card" style="--ac:rgba(157,111,255,.08)"><div class="val" style="color:var(--purple)" id="st-ema">—</div><div class="lbl">Near EMA20</div></div>
-    <div class="stat-card" style="--ac:rgba(0,200,216,.08)"><div class="val" style="color:var(--cyan)" id="st-wma">—</div><div class="lbl">WMA Aligned</div></div>
-    <div class="stat-card" style="--ac:rgba(245,166,35,.08)"><div class="val" style="color:var(--amber)" id="st-watchlist">—</div><div class="lbl">Watchlisted</div></div>
-    <div class="stat-card" style="--ac:rgba(240,79,79,.08)"><div class="val" style="color:var(--red)" id="st-err">—</div><div class="lbl">Failed Fetch</div></div>
+    <div class="stat-card" style="--ac:rgba(79,142,247,.08)"><div class="val" id="st-scanned">—</div><div class="lbl">Universe Scanned</div></div>
+    <div class="stat-card" style="--ac:rgba(32,212,114,.08)"><div class="val" style="color:var(--green)" id="st-buy">—</div><div class="lbl">Long Signals</div></div>
+    <div class="stat-card" style="--ac:rgba(245,166,35,.08)"><div class="val" style="color:var(--amber)" id="st-watch">—</div><div class="lbl">Active Setups</div></div>
+    <div class="stat-card" style="--ac:rgba(157,111,255,.08)"><div class="val" style="color:var(--purple)" id="st-ema">—</div><div class="lbl">EMA Proximity</div></div>
+    <div class="stat-card" style="--ac:rgba(0,200,216,.08)"><div class="val" style="color:var(--cyan)" id="st-wma">—</div><div class="lbl">Trend Aligned</div></div>
+    <div class="stat-card" style="--ac:rgba(245,166,35,.08)"><div class="val" style="color:var(--amber)" id="st-watchlist">—</div><div class="lbl">Tracked</div></div>
+    <div class="stat-card" style="--ac:rgba(240,79,79,.08)"><div class="val" style="color:var(--red)" id="st-err">—</div><div class="lbl">Data Errors</div></div>
   </div>
 
-  <!-- HIDDEN CONDITIONS -->
+  <!-- INTERNAL CONDITIONS (not user-visible) -->
   <div class="cond-panel">
     <input type="checkbox" id="c1" checked>
     <input type="checkbox" id="c2" checked>
@@ -317,28 +321,28 @@ td{padding:7px 10px;font-family:var(--mono);font-size:11px;white-space:nowrap;ve
 
   <!-- TABS -->
   <div class="tabs-bar">
-    <button class="tab-btn active" onclick="switchTab('table')">📋 Screener Results</button>
-    <button class="tab-btn" onclick="switchTab('charts')">📈 BUY Charts + Indicators</button>
+    <button class="tab-btn active" onclick="switchTab('table')">◈ Signal Matrix</button>
+    <button class="tab-btn" onclick="switchTab('charts')">◈ Technical Profiles</button>
   </div>
 
   <!-- TABLE VIEW -->
   <div id="view-table" class="view-panel">
     <div class="table-card">
       <div class="table-head">
-        <h2>📋 Results</h2>
+        <h2>◈ Signal Matrix</h2>
         <div class="table-actions">
           <select id="sigFilter" onchange="applyFilter()" style="width:auto;padding:5px 9px;font-size:10px;">
-            <option value="all">All Signals</option>
-            <option value="BUY">BUY only</option>
-            <option value="WATCH">WATCH only</option>
-            <option value="FAIL">FAIL only</option>
+            <option value="all">All Setups</option>
+            <option value="BUY">Long only</option>
+            <option value="WATCH">In-Setup only</option>
+            <option value="FAIL">Neutral only</option>
           </select>
           <select id="sectorResultFilter" onchange="applyFilter()" style="width:auto;padding:5px 9px;font-size:10px;">
             <option value="all">All Sectors</option>
           </select>
-          <button class="btn-sm" id="wlFilterBtn" onclick="toggleWlFilter()">⭐ Watchlist Only</button>
-          <button class="btn-sm" onclick="exportCSV()">↓ CSV Export</button>
-          <button class="btn-sm" onclick="clearAll()">✕ Clear</button>
+          <button class="btn-sm" id="wlFilterBtn" onclick="toggleWlFilter()">⭐ Tracked Only</button>
+          <button class="btn-sm" onclick="exportCSV()">↓ Export Report</button>
+          <button class="btn-sm" onclick="clearAll()">✕ Reset</button>
         </div>
       </div>
       <div class="results-wrap">
@@ -346,25 +350,25 @@ td{padding:7px 10px;font-family:var(--mono);font-size:11px;white-space:nowrap;ve
           <thead>
             <tr>
               <th style="width:26px;"></th>
-              <th onclick="sortBy('sym')"># Symbol</th>
-              <th onclick="sortBy('sector')">Sector</th>
-              <th onclick="sortBy('close')">Close ₹</th>
-              <th onclick="sortBy('chg')">Chg %</th>
-              <th>Trend</th>
-              <th>Signal</th>
-              <th onclick="sortBy('ema20dist')">EMA20</th>
-              <th onclick="sortBy('rsi')">RSI14</th>
-              <th onclick="sortBy('volRat')">Vol×</th>
-              <th onclick="sortBy('passCount')">Score</th>
-              <th>Conditions</th>
-              <th>Src</th>
+              <th onclick="sortBy('sym')"># Security</th>
+              <th onclick="sortBy('sector')">Industry</th>
+              <th onclick="sortBy('close')">LTP ₹</th>
+              <th onclick="sortBy('chg')">Delta %</th>
+              <th>Price Action</th>
+              <th>Setup</th>
+              <th onclick="sortBy('ema20dist')">EMA Dist</th>
+              <th onclick="sortBy('rsi')">RSI(14)</th>
+              <th onclick="sortBy('volRat')">Volume ×</th>
+              <th onclick="sortBy('passCount')">Confluence</th>
+              <th>Criteria</th>
+              <th>Feed</th>
             </tr>
           </thead>
           <tbody id="resultBody">
             <tr><td colspan="13">
               <div class="empty">
                 <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                <p>Choose a universe, apply filters, and click <strong>Screen Universe</strong>.<br>Results appear live as each stock is fetched.</p>
+                <p>Select a universe, configure your scope, and click <strong>Deploy Scan</strong>.<br>Signals populate in real time as each security is analyzed.</p>
               </div>
             </td></tr>
           </tbody>
@@ -376,13 +380,24 @@ td{padding:7px 10px;font-family:var(--mono);font-size:11px;white-space:nowrap;ve
   <!-- CHARTS VIEW -->
   <div id="view-charts" class="view-panel" style="display:none;">
     <div class="charts-grid" id="chartsGrid">
-      <div class="empty" style="grid-column:1/-1;"><p>Run the screener to see BUY charts with EMA20, WMA42 & WMA84 overlaid.</p></div>
+      <div class="empty" style="grid-column:1/-1;"><p>Execute a scan to view confirmed setups with EMA20, WMA42 &amp; WMA84 overlaid.</p></div>
     </div>
   </div>
 
 </div>
 
 <script>
+// ═══════════════════════════════════
+// DISPLAY MAPS
+// ═══════════════════════════════════
+const SIGNAL_DISPLAY = {BUY:'LONG', WATCH:'IN SETUP', FAIL:'NEUTRAL'};
+
+function sourceLabel(s){
+  if(s==='yahoo') return 'YFN';
+  if(s==='stooq') return 'STOOQ';
+  return 'ERR';
+}
+
 // ═══════════════════════════════════
 // STOCK DATA
 // ═══════════════════════════════════
@@ -403,7 +418,6 @@ const PALETTE=['#4f8ef7','#00c8d8','#20d472','#f5a623','#9d6fff','#f97316','#ec4
 const SECTOR_COLORS={};
 UNIQUE_SECTORS.forEach((s,i)=>{SECTOR_COLORS[s]=PALETTE[i%PALETTE.length];});
 
-// Build dropdowns + chips
 const secFilterDD=document.getElementById('sectorFilter');
 const secResultDD=document.getElementById('sectorResultFilter');
 const chipRow=document.getElementById('sectorChips');
@@ -418,7 +432,6 @@ function buildChips(){
   allChip.innerHTML='All <span class="cnt">'+getSymsForUniverse().length+'</span>';
   allChip.onclick=()=>{secFilterDD.value='all';updateCount();chipRow.querySelectorAll('.schip').forEach(c=>c.classList.remove('active'));allChip.classList.add('active');};
   chipRow.appendChild(allChip);
-
   UNIQUE_SECTORS.forEach(s=>{
     const cnt=getSymsForUniverse().filter(sym=>SECTOR_MAP[sym]===s).length;
     if(!cnt)return;
@@ -448,7 +461,7 @@ function getFilteredSyms(){
 
 function updateCount(){
   const syms=getFilteredSyms();
-  document.getElementById('stockCount').textContent=`${syms.length} stocks`;
+  document.getElementById('stockCount').textContent=`${syms.length} securities`;
   buildChips();
 }
 document.getElementById('universe').addEventListener('change',updateCount);
@@ -483,7 +496,7 @@ function calcSMA(data,p){
 }
 
 // ═══════════════════════════════════
-// FETCH
+// DATA FETCH
 // ═══════════════════════════════════
 async function fetchStooq(sym,days){
   const to=new Date(),from=new Date();from.setDate(from.getDate()-days);
@@ -577,7 +590,7 @@ function screenStock(sym,rows,source){
 }
 
 // ═══════════════════════════════════
-// WATCHLIST
+// TRACKED SECURITIES
 // ═══════════════════════════════════
 let watchlist=new Set(JSON.parse(localStorage.getItem('bc_watchlist')||'[]'));
 let wlFilterActive=false;
@@ -601,7 +614,7 @@ function toggleWlFilter(){
 function renderWLPanel(){
   document.getElementById('wlCount').textContent=watchlist.size;
   const container=document.getElementById('wlChips');
-  if(!watchlist.size){container.innerHTML='<span style="color:var(--muted);font-size:11px;">No stocks in watchlist.</span>';return;}
+  if(!watchlist.size){container.innerHTML='<span style="color:var(--muted);font-size:11px;">No tracked securities.</span>';return;}
   container.innerHTML=[...watchlist].map(sym=>{
     const r=screenResults.find(x=>x.sym===sym);
     const chgStr=r?` <span style="color:${r.chg>=0?'var(--green)':'var(--red)'};">${r.chg>=0?'+':''}${r.chg.toFixed(1)}%</span>`:'';
@@ -611,19 +624,19 @@ function renderWLPanel(){
 renderWLPanel();
 
 // ═══════════════════════════════════
-// RUN ALL
+// SCAN EXECUTION
 // ═══════════════════════════════════
 let screenResults=[],sortCol=null,sortDir=1,scanning=false;
 let activeChartInstances=[];
 
 async function runAll(){
   const syms=getFilteredSyms();
-  if(!syms.length){alert('No stocks in selected universe/sector.');return;}
+  if(!syms.length){alert('No securities in selected universe/sector.');return;}
   const days=+document.getElementById('period').value;
   const concurrency=+document.getElementById('concurrency').value;
   scanning=true;screenResults=[];
   document.getElementById('runBtn').disabled=true;
-  document.getElementById('runBtn').textContent='⏳ Scanning...';
+  document.getElementById('runBtn').textContent='⏳ Analyzing...';
   document.getElementById('stopBtn').style.display='inline-flex';
   document.getElementById('progressCard').classList.add('show');
   document.getElementById('progGrid').innerHTML='';
@@ -637,7 +650,7 @@ async function runAll(){
     document.getElementById('progNums').textContent=`${done} / ${syms.length}`;
     const el=document.createElement('div');
     el.className='prog-item '+(ok?'prog-ok':'prog-err');
-    el.textContent=(ok?'✓':'✗')+' '+sym+(src?' ·'+src:'');
+    el.textContent=(ok?'✓':'✗')+' '+sym+(src?' ·'+sourceLabel(src):'');
     document.getElementById('progGrid').appendChild(el);
     document.getElementById('progGrid').scrollTop=99999;
   };
@@ -664,17 +677,17 @@ async function runAll(){
     if(i+concurrency<syms.length)await sleep(400);
   }
   document.getElementById('runBtn').disabled=false;
-  document.getElementById('runBtn').textContent='⚡ Screen Universe';
+  document.getElementById('runBtn').textContent='⚡ Deploy Scan';
   document.getElementById('stopBtn').style.display='none';
   scanning=false;
-  document.getElementById('scanTimeLabel').textContent='Scanned '+new Date().toLocaleTimeString();
+  document.getElementById('scanTimeLabel').textContent='Last scan: '+new Date().toLocaleTimeString();
   renderResults();
 }
 
 function stopScan(){
   scanning=false;
   document.getElementById('runBtn').disabled=false;
-  document.getElementById('runBtn').textContent='⚡ Screen Universe';
+  document.getElementById('runBtn').textContent='⚡ Deploy Scan';
   document.getElementById('stopBtn').style.display='none';
 }
 function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
@@ -710,7 +723,7 @@ function applyFilter(){
 }
 
 // ═══════════════════════════════════
-// TABLE
+// TABLE RENDER
 // ═══════════════════════════════════
 function scoreBar(passed,required){
   const segs=Array.from({length:required},(_, i)=>{
@@ -739,38 +752,39 @@ function miniSparkline(sym,history){
 function renderTable(data){
   const body=document.getElementById('resultBody');
   if(!data.length){
-    body.innerHTML=`<tr><td colspan="13"><div class="empty"><p>No matches for current filters. Try adjusting signal or sector filter.</p></div></td></tr>`;
+    body.innerHTML=`<tr><td colspan="13"><div class="empty"><p>No signals match the active filters. Adjust scope or criteria.</p></div></td></tr>`;
     return;
   }
   let rowNum=0;
   body.innerHTML=data.map(r=>{
     rowNum++;
-    const sigClass={BUY:'pill-buy',WATCH:'pill-watch',FAIL:'pill-fail'}[r.signal]||'pill-fail';
+    const sigClass={BUY:'pill-buy',WATCH:'pill-watch',FAIL:'pill-neutral'}[r.signal]||'pill-neutral';
+    const sigLabel=SIGNAL_DISPLAY[r.signal]||r.signal;
     const inWL=watchlist.has(r.sym);
     const rsiColor=r.rsi===null?'var(--muted)':r.rsi>70?'var(--red)':r.rsi<30?'var(--amber)':'var(--green)';
     const scol=SECTOR_COLORS[r.sector]||'#5a6480';
     const srcCls=r.source==='stooq'?'src-stooq':r.source==='yahoo'?'src-yahoo':'src-err';
     const ema20Color=r.aboveEma20?'var(--green)':'var(--amber)';
     return`<tr class="${inWL?'watchlisted':''}">
-      <td><button class="wl-btn ${inWL?'active':''}" onclick="toggleWL('${r.sym}')" title="${inWL?'Remove from':'Add to'} watchlist">⭐</button></td>
+      <td><button class="wl-btn ${inWL?'active':''}" onclick="toggleWL('${r.sym}')" title="${inWL?'Untrack':'Track'} ${r.sym}">⭐</button></td>
       <td class="sym-cell">${rowNum}&nbsp;${r.sym}</td>
       <td><span class="sector-tag" style="color:${scol};border-color:${scol}20;background:${scol}10;">${r.sector}</span></td>
       <td style="color:#fff;font-weight:600;">₹${r.close.toFixed(2)}</td>
       <td class="${r.chg>=0?'pos':'neg'}">${r.chg>=0?'+':''}${r.chg.toFixed(2)}%</td>
       <td class="spark-cell">${miniSparkline(r.sym,r.history)}</td>
-      <td><span class="pill ${sigClass}">${r.signal}</span></td>
+      <td><span class="pill ${sigClass}">${sigLabel}</span></td>
       <td style="color:${ema20Color};font-size:10px;">${r.ema20dist.toFixed(1)}%${r.aboveEma20?'↑':'↓'}</td>
       <td style="color:${rsiColor};">${r.rsi!==null?r.rsi.toFixed(1):'—'}</td>
       <td class="${r.volRat>=1.5?'pos':r.volRat>=1?'neu':'neg'}">${r.volRat.toFixed(2)}×</td>
       <td>${scoreBar(r.passed,r.required)}</td>
       <td>${condBadges(r.results)}</td>
-      <td><span class="src-tag ${srcCls}">${r.source.toUpperCase()}</span></td>
+      <td><span class="src-tag ${srcCls}">${sourceLabel(r.source)}</span></td>
     </tr>`;
   }).join('');
 }
 
 // ═══════════════════════════════════
-// CHARTS WITH INDICATOR OVERLAYS
+// TECHNICAL PROFILES (CHARTS)
 // ═══════════════════════════════════
 function renderChartsView(){
   const container=document.getElementById('chartsGrid');
@@ -783,7 +797,7 @@ function renderChartsView(){
   if(sec!=='all')chartData=chartData.filter(r=>r.sector===sec);
 
   if(!chartData.length){
-    container.innerHTML=`<div class="empty" style="grid-column:1/-1;margin-top:40px;"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><p>No BUY signals to chart. Run the screener or adjust the sector filter.</p></div>`;
+    container.innerHTML=`<div class="empty" style="grid-column:1/-1;margin-top:40px;"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><p>No confirmed signals to profile. Execute a scan or adjust the scope filter.</p></div>`;
     return;
   }
 
@@ -798,7 +812,7 @@ function renderChartsView(){
       <div class="chart-header">
         <span style="font-size:14px;font-weight:800;color:#fff;">${r.sym}</span>
         <span class="sector-tag" style="color:${scol};border-color:${scol}20;background:${scol}10;">${r.sector}</span>
-        <span class="pill pill-buy">BUY</span>
+        <span class="pill pill-buy">LONG</span>
         <div class="chart-meta">
           <span>₹<strong style="color:#fff;">${r.close.toFixed(2)}</strong></span>
           <span style="color:${chgColor};">${r.chg>=0?'+':''}${r.chg.toFixed(2)}%</span>
@@ -811,12 +825,11 @@ function renderChartsView(){
         <span class="ind-badge"><div class="ind-dot" style="background:#20d472;"></div>EMA20: ₹${r.ema20.toFixed(1)}</span>
         <span class="ind-badge"><div class="ind-dot" style="background:#4f8ef7;"></div>WMA42: ₹${r.wma42.toFixed(1)}</span>
         <span class="ind-badge"><div class="ind-dot" style="background:#f5a623;"></div>WMA84: ₹${r.wma84.toFixed(1)}</span>
-        <span class="ind-badge" style="margin-left:auto;font-size:8px;color:var(--muted);">Score ${r.passed}/${r.required}</span>
+        <span class="ind-badge" style="margin-left:auto;font-size:8px;color:var(--muted);">Confluence ${r.passed}/${r.required}</span>
       </div>
     `;
     container.appendChild(card);
 
-    // Build series
     const candles=r.history.map((row,idx)=>({x:idx+1,y:[row.o,row.h,row.l,row.c]}));
     const ema20line=r.ema20arr.map((v,idx)=>({x:idx+1,y:v!=null?+v.toFixed(2):null})).filter(p=>p.y!==null);
     const wma42line=r.wma42arr.map((v,idx)=>({x:idx+1,y:v!=null?+v.toFixed(2):null})).filter(p=>p.y!==null);
@@ -873,33 +886,32 @@ function sortBy(col){
 
 function onSectorDropdown(){
   updateCount();
-  // sync chips
   const v=secFilterDD.value;
   chipRow.querySelectorAll('.schip').forEach(c=>{c.classList.remove('active');if((v==='all'&&c.textContent.startsWith('All'))||c.textContent.trim().startsWith(v))c.classList.add('active');});
 }
 
 function exportCSV(){
-  if(!screenResults.length){alert('No results to export.');return;}
-  const h=['Symbol','Sector','Close','Chg%','Signal','EMA20','EMA20Dist%','AboveEMA20','WMA42','WMA84','VolRatio','RSI14','Score','Source','Watchlist'];
+  if(!screenResults.length){alert('No data to export.');return;}
+  const h=['Security','Industry','LTP','Delta%','Setup','EMA20','EMA20Dist%','AboveEMA20','WMA42','WMA84','VolumeRatio','RSI14','Confluence','DataFeed','Tracked'];
   const rows=screenResults.map(r=>[
-    r.sym,r.sector,r.close.toFixed(2),r.chg.toFixed(2),r.signal,
+    r.sym,r.sector,r.close.toFixed(2),r.chg.toFixed(2),SIGNAL_DISPLAY[r.signal]||r.signal,
     r.ema20.toFixed(2),r.ema20dist.toFixed(2),r.aboveEma20?'YES':'NO',
     r.wma42.toFixed(2),r.wma84.toFixed(2),r.volRat.toFixed(2),
-    r.rsi!==null?r.rsi.toFixed(1):'',`${r.passed}/${r.required}`,r.source,watchlist.has(r.sym)?'YES':''
+    r.rsi!==null?r.rsi.toFixed(1):'',`${r.passed}/${r.required}`,sourceLabel(r.source),watchlist.has(r.sym)?'YES':''
   ]);
   const csv=[h,...rows].map(r=>r.join(',')).join('\n');
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
-  a.download=`nse_screen_${new Date().toISOString().split('T')[0]}.csv`;
+  a.download=`nse_signals_${new Date().toISOString().split('T')[0]}.csv`;
   a.click();
 }
 
 function clearAll(){
   screenResults=[];sortCol=null;
-  document.getElementById('resultBody').innerHTML=`<tr><td colspan="13"><div class="empty"><p>Cleared. Ready to scan again.</p></div></td></tr>`;
+  document.getElementById('resultBody').innerHTML=`<tr><td colspan="13"><div class="empty"><p>Output cleared. Ready for next analysis.</p></div></td></tr>`;
   document.getElementById('progressCard').classList.remove('show');
   ['st-scanned','st-buy','st-watch','st-ema','st-wma','st-err'].forEach(id=>document.getElementById(id).textContent='—');
-  document.getElementById('scanTimeLabel').textContent='Not scanned yet';
+  document.getElementById('scanTimeLabel').textContent='Awaiting deployment';
   if(document.getElementById('view-charts').style.display==='block')renderChartsView();
 }
 </script>
